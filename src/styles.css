@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-dark: "#0B0F17";
+  --color-brand-card: "#131A29";
+  --color-brand-cardHover: "#182033";
+  --color-brand-border: "#1E293B";
+  --color-brand-accent: "#2563EB";
+  --color-brand-accentHover: "#1D4ED8";
+  --color-brand-text: "#94A3B8";
+}
+
+body {
+  font-family: Inter, sans-serif;
+}
