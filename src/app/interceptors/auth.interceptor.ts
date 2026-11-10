@@ -6,7 +6,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     'http://localhost:8081/'
   );
   const esLogin = req.url.endsWith('/auth/login');
-  if (token && esBackendFitZone && !esLogin) {
+  const esRegistro = req.url.endsWith('/auth/registro');
+  const consultaPlanes = req.url.endsWith('/planes');
+  if (token && esBackendFitZone && !esLogin && !esRegistro && !consultaPlanes) {
     const peticionAutenticada = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

@@ -15,6 +15,22 @@ export interface MiPerfilSocio {
   planNombre: string | null;
   precioMensual: number | null
 }
+
+export interface ActividadResumen {
+  nombre: string;
+  fecha: string;
+  hora: string | null;
+  sala: string | null;
+  monitor: string | null;
+}
+
+export interface ResumenSocio {
+  clasesEsteMes: number;
+  reservasFuturas: number;
+  estadoCuota: string;
+  proximaActividad: ActividadResumen | null;
+  actividadesRecientes: ActividadResumen[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -26,5 +42,9 @@ export class SocioService {
     return this.http.get<MiPerfilSocio>(
       `${this.apiUrl}/mi-perfil`
     );
+  }
+
+  obtenerMiResumen(): Observable<ResumenSocio> {
+    return this.http.get<ResumenSocio>(`${this.apiUrl}/mi-resumen`);
   }
 }

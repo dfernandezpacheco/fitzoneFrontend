@@ -17,6 +17,10 @@ export class AppComponent {
 
   // Esta función devuelve true si estamos en el login o en el área de socio
   esRutaSinHeader(): boolean {
-    return this.router.url.startsWith('/socio') || this.router.url === '/login';
+    const ruta = this.router.url;
+    return ruta.startsWith('/socio')
+      || ruta.startsWith('/admin')
+      || ruta.startsWith('/recepcion')
+      || ruta.startsWith('/login');
   }
 }
