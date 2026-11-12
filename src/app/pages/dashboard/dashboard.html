@@ -1,0 +1,46 @@
+<div class="socio-layout">
+  <aside class="sidebar">
+    <div class="logo-container"><div class="logo-icon">FZ</div><div class="logo-text"><h2>FitZone</h2><span>ÁREA SOCIO</span></div></div>
+    <div class="sidebar-section"><span class="section-title">NAVEGACIÓN</span>
+      <nav class="sidebar-nav">
+        <a routerLink="/socio/dashboard" class="nav-item active"><span class="nav-icon">⌂</span>Inicio</a>
+        <a routerLink="/socio/mi-ficha" class="nav-item"><span class="nav-icon">◉</span>Mi ficha</a>
+        <button class="nav-item" type="button"><span class="nav-icon">€</span>Cuotas</button>
+        <button class="nav-item" type="button"><span class="nav-icon">✦</span>Actividades</button>
+        <button class="nav-item" type="button"><span class="nav-icon">▣</span>Reservas</button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom"><span class="section-title">CUENTA</span><button type="button" class="logout-button" (click)="cerrarSesion()"><span>↪</span>Cerrar sesión</button></div>
+  </aside>
+
+  <main class="dashboard-content">
+    <header class="dashboard-header"><div><h2>Sesión Socio</h2><span>FitZone · Área privada</span></div><div class="user-info"><div class="user-avatar">{{ inicialUsuario() }}</div><div class="user-details"><strong>{{ nombreCompleto() }}</strong><span>Usuario</span></div></div></header>
+    <div class="dashboard-body">
+      @if (cargandoPerfil()) { <div class="loading-message">Cargando tu información...</div> }
+      @if (errorPerfil()) { <div class="error-message">{{ errorPerfil() }} <button type="button" (click)="cargarPerfil()">Reintentar</button></div> }
+      @if (perfil(); as datos) {
+        <section class="welcome-section"><div><h1>Hola, {{ nombreCompleto() }} 👋</h1><p>Aquí tienes un resumen de tu actividad en FitZone.</p></div><div class="status-badge" [class.inactive]="socioInactivo()"><span class="status-dot"></span>{{ estadoSocio() }}</div></section>
+        @if (resumen(); as resumen) {
+          <section class="stats-grid">
+            <article class="stat-card"><span class="stat-label">PLAN ACTUAL</span><h2>{{ planActual() }}</h2><p>Tu membresía actual</p></article>
+            <article class="stat-card"><span class="stat-label">CLASES ESTE MES</span><h2>{{ resumen.clasesEsteMes }}</h2><p>Reservas del mes actual</p></article>
+            <article class="stat-card"><span class="stat-label">RESERVAS</span><h2>{{ resumen.reservasFuturas }}</h2><p>Próximas</p></article>
+            <article class="stat-card quota-card"><span class="stat-label">CUOTAS</span><h2>{{ resumen.estadoCuota }}</h2><p>Consulta tu historial →</p></article>
+          </section>
+          <section class="dashboard-grid"><div class="left-column">
+            <section class="dashboard-panel"><h3>Mi próxima actividad</h3>
+              @if (resumen.proximaActividad; as actividad) { <div class="next-activity"><div class="activity-day">{{ diaActividad(actividad.fecha) }}</div><div class="activity-info"><h4>{{ actividad.nombre }}</h4><p>{{ actividad.hora || 'Hora pendiente' }} · {{ actividad.sala || 'Sala pendiente' }}</p><span>Entrenador: {{ actividad.monitor || 'Por asignar' }}</span></div></div> }
+              @else { <p class="empty-message">No tienes actividades próximas.</p> }
+            </section>
+            <section class="dashboard-panel recent-panel"><h3>Actividad reciente</h3><div class="recent-list">
+              @for (actividad of resumen.actividadesRecientes; track actividad.fecha + actividad.nombre) { <div class="recent-row"><span class="recent-date">{{ formatoFecha(actividad.fecha) }}</span><strong>{{ actividad.nombre }}</strong><span class="completed-status">Realizada</span></div> }
+              @empty { <p class="empty-message">Todavía no hay actividad registrada.</p> }
+            </div></section>
+          </div>
+          <div class="right-column"><section class="dashboard-panel quick-panel"><h3>Accesos rápidos</h3><button type="button" class="quick-link"><span>Reservar clase</span><span>+</span></button><button type="button" class="quick-link"><span>Consultar cuotas</span><span>+</span></button><a routerLink="/socio/mi-ficha" class="quick-link"><span>Ver mi ficha</span><span>+</span></a></section></div>
+          </section>
+        } @else if (!cargandoPerfil()) { <p class="empty-message">Cargando el resumen de actividad...</p> }
+      }
+    </div>
+  </main>
+</div>

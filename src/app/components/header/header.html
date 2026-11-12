@@ -1,0 +1,27 @@
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F17]/80 backdrop-blur-md border-b border-[#1E293B]">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2">
+      <div class="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center font-bold text-white text-xl">
+        FZ
+      </div>
+      <span class="font-bold text-xl text-white tracking-wide">FitZone</span>
+    </a>
+
+    <!-- Navegación Central -->
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <a routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Inicio</a>
+      <a routerLink="/clases" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Clases</a>
+      <a routerLink="/membresia" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Membresia</a>
+    </nav>
+
+    <!-- Botones Derecha -->
+    <div class="flex items-center gap-4">
+      <a href="../login" class="text-sm font-medium text-white hover:text-[#94A3B8] transition-colors">Ingresar</a>
+      <a href="#" class="bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all">
+        Comenzar
+      </a>
+    </div>
+  </div>
+
+</header>

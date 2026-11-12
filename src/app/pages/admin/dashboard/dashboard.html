@@ -1,0 +1,353 @@
+<div class="admin-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="admin-sidebar">
+
+    <div class="admin-logo">
+
+      <div class="logo-icon">
+        FZ
+      </div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Administración</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">
+      NAVEGACIÓN
+    </span>
+
+    <nav class="admin-nav">
+
+      <a class="admin-nav-item active">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="admin-nav-item" href="/admin/planes">
+        <span>◇</span>
+        Planes
+      </a>
+
+      <a class="admin-nav-item" href="/admin/estados">
+        <span>◉</span>
+        Estados
+      </a>
+
+      <a class="admin-nav-item" href="/admin/cuotas">
+        <span>€</span>
+        Cuotas
+      </a>
+
+      <a class="admin-nav-item">
+        <span>▤</span>
+        Informes
+      </a>
+
+    </nav>
+
+    <div class="sidebar-account">
+
+      <span class="sidebar-title">
+        CUENTA
+      </span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="cerrarSesion()"
+      >
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="admin-content">
+
+    <!-- CABECERA -->
+
+    <header class="admin-header">
+
+      <div>
+        <h2>Sesión Admin</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="admin-user">
+
+        <div class="admin-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Administrador</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="admin-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="admin-welcome">
+
+        <div>
+
+          <h1>Panel de administración</h1>
+
+          <p>
+            Control global de FitZone: planes, estados, cuotas e informes.
+          </p>
+
+        </div>
+
+        <span class="system-status">
+          ● SISTEMA OPERATIVO
+        </span>
+
+      </section>
+
+
+      <!-- CARGANDO -->
+
+      @if (cargandoResumen) {
+        <p class="admin-loading">
+          Cargando indicadores...
+        </p>
+      }
+
+
+      <!-- ERROR -->
+
+      @if (errorResumen) {
+
+        <div class="admin-error">
+
+          <p>{{ errorResumen }}</p>
+
+          <button
+            type="button"
+            (click)="cargarResumen()"
+          >
+            Reintentar
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- ESTADÍSTICAS -->
+
+      <section class="admin-stats">
+
+        <!-- SOCIOS TOTALES -->
+
+        <article class="admin-card">
+
+          <span>SOCIOS TOTALES</span>
+
+          <h2>
+            {{ resumen?.totalSocios ?? '—' }}
+          </h2>
+
+          <p>
+            @if (resumen) {
+              {{ resumen.sociosActivos }} activos ·
+              {{ resumen.sociosSuspendidos }} suspendidos
+            } @else {
+              Datos pendientes de carga
+            }
+          </p>
+
+        </article>
+
+
+        <!-- INGRESOS MES -->
+
+        <article class="admin-card">
+
+          <span>INGRESOS MES</span>
+
+          <h2>
+            {{ ingresosMesFormateados }}
+          </h2>
+
+          <p>
+            Cuotas cobradas durante este mes
+          </p>
+
+        </article>
+
+
+        <!-- CUOTAS PENDIENTES -->
+
+        <article class="admin-card">
+
+          <span>CUOTAS PENDIENTES</span>
+
+          <h2>
+            {{ resumen?.cuotasPendientes ?? '—' }}
+          </h2>
+
+          <p>
+            Cuotas pendientes de pago
+          </p>
+
+        </article>
+
+
+        <!-- PLANES REGISTRADOS -->
+
+        <article class="admin-card">
+
+          <span>PLANES REGISTRADOS</span>
+
+          <h2>
+            {{ resumen?.totalPlanes ?? '—' }}
+          </h2>
+
+          <p>
+            Total de planes registrados en FitZone
+          </p>
+
+        </article>
+
+      </section>
+
+
+      <!-- ESTADO DEL GIMNASIO -->
+
+      <section class="admin-section">
+
+        <h2>Estado del gimnasio</h2>
+
+        <div class="admin-columns">
+
+
+          <!-- DISTRIBUCIÓN POR PLAN -->
+
+          <article class="admin-panel">
+
+            <h3>Distribución de socios por plan</h3>
+
+            @if (resumen && resumen.distribucionSociosPorPlan.length > 0) {
+
+              <div class="plan-distribution-list">
+
+                @for (
+                  plan of resumen.distribucionSociosPorPlan;
+                  track plan.nombrePlan
+                  ) {
+
+                  <div class="plan-distribution-row">
+
+                    <span>
+                      {{ plan.nombrePlan }}
+                    </span>
+
+                    <strong>
+                      {{ plan.totalSocios }} socios
+                    </strong>
+
+                  </div>
+
+                }
+
+              </div>
+
+            } @else {
+
+              <p class="pending-message">
+                No hay datos de distribución por plan disponibles.
+              </p>
+
+            }
+
+          </article>
+
+
+          <!-- ALERTAS -->
+
+          <article class="admin-panel alerts-panel">
+
+            <h3>Alertas</h3>
+
+            <p>
+              Cuotas pendientes:
+              {{ resumen?.cuotasPendientes ?? '—' }}
+            </p>
+
+            <p>
+              Planes registrados:
+              {{ resumen?.totalPlanes ?? '—' }}
+            </p>
+
+            <p>
+              Incidencias abiertas: —
+            </p>
+
+          </article>
+
+
+        </div>
+
+      </section>
+
+
+      <!-- INFORMES -->
+
+      <section class="admin-section">
+
+        <h2>Informes recientes</h2>
+
+        <article class="admin-panel report-panel">
+
+          <div>
+
+            <strong>Informe mensual</strong>
+
+            <span>Ingresos y altas</span>
+
+          </div>
+
+          <span class="pending-message">
+            Pendiente de implementación
+          </span>
+
+        </article>
+
+
+        <article class="admin-panel report-panel">
+
+          <div>
+
+            <strong>Estado de cuotas</strong>
+
+            <span>Pendientes y vencimientos</span>
+
+          </div>
+
+          <span class="pending-message">
+            Pendiente de implementación
+          </span>
+        </article>
+      </section>
+    </div>
+  </main>
+</div>

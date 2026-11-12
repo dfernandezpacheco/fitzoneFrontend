@@ -1,0 +1,428 @@
+<div class="admin-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="admin-sidebar">
+
+    <div class="admin-logo">
+
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Administración</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="admin-nav">
+
+      <a class="admin-nav-item" href="/admin/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="admin-nav-item" href="/admin/planes">
+        <span>◇</span>
+        Planes
+      </a>
+
+      <a class="admin-nav-item active" href="/admin/estados">
+        <span>◉</span>
+        Estados
+      </a>
+
+      <a class="admin-nav-item" href="/admin/cuotas">
+        <span>€</span>
+        Cuotas
+      </a>
+
+      <a class="admin-nav-item">
+        <span>▤</span>
+        Informes
+      </a>
+
+    </nav>
+
+    <div class="sidebar-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- CONTENIDO -->
+
+  <main class="admin-content">
+
+    <!-- CABECERA -->
+
+    <header class="admin-header">
+
+      <div>
+        <h2>Sesión Admin</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="admin-user">
+
+        <div class="admin-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Administrador</span>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- CUERPO -->
+
+    <div class="admin-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="admin-welcome">
+
+        <div>
+
+          <h1>Estados de socios</h1>
+
+          <p>
+            Consulta y administra el estado de los socios de FitZone.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="admin-back-button"
+          (click)="volverDashboard()">
+          ← Volver al dashboard
+        </button>
+
+      </section>
+
+      <!-- MENSAJE DE ÉXITO -->
+
+      @if (mensaje) {
+
+        <div class="states-success">
+          ✓ {{ mensaje }}
+        </div>
+
+      }
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="states-error">
+
+          <p>{{ error }}</p>
+
+          <button
+            type="button"
+            (click)="cargarSocios()">
+            Reintentar
+          </button>
+
+        </div>
+
+      }
+
+      <!-- INDICADORES -->
+
+      <section class="states-summary">
+
+        <article class="states-summary-card">
+
+          <span>SOCIOS TOTALES</span>
+
+          <strong>
+            {{ totalSocios }}
+          </strong>
+
+          <small>Socios cargados</small>
+
+        </article>
+
+
+        <article class="states-summary-card">
+
+          <span>SOCIOS ACTIVOS</span>
+
+          <strong class="text-green">
+            {{ totalActivos }}
+          </strong>
+
+          <small>Con acceso activo</small>
+
+        </article>
+
+
+        <article class="states-summary-card">
+
+          <span>SOCIOS SUSPENDIDOS</span>
+
+          <strong class="text-red">
+            {{ totalSuspendidos }}
+          </strong>
+
+          <small>Con acceso suspendido</small>
+
+        </article>
+
+      </section>
+
+      <!-- GESTIÓN DE SOCIOS -->
+
+      <section class="admin-states-section">
+
+        <div class="states-section-header">
+
+          <div>
+            <h2>Listado de socios</h2>
+            <p>Gestiona los estados de los miembros del gimnasio.</p>
+          </div>
+
+          <button
+            type="button"
+            class="admin-refresh-button"
+            (click)="cargarSocios()"
+            [disabled]="cargando">
+            ↻ Actualizar
+          </button>
+
+        </div>
+
+        <!-- BUSCADOR Y FILTROS -->
+
+        <div class="states-toolbar">
+
+          <div class="states-search">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              placeholder="Buscar por nombre, DNI o email..."
+              [value]="terminoBusqueda"
+              (input)="terminoBusqueda = $any($event.target).value">
+
+          </div>
+
+
+          <div class="states-filters">
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'TODOS'"
+              (click)="cambiarFiltro('TODOS')">
+              Todos
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'ACTIVOS'"
+              (click)="cambiarFiltro('ACTIVOS')">
+              Activos
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'SUSPENDIDOS'"
+              (click)="cambiarFiltro('SUSPENDIDOS')">
+              Suspendidos
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="states-message">
+            <div class="states-spinner"></div>
+            Cargando socios...
+          </div>
+
+        }
+
+        <!-- TABLA -->
+
+        @if (!cargando && !error) {
+
+          @if (sociosFiltrados.length > 0) {
+
+            <div class="states-table-container">
+
+              <table class="states-table">
+
+                <thead>
+
+                <tr>
+                  <th>SOCIO</th>
+                  <th>DNI</th>
+                  <th>PLAN</th>
+                  <th>FECHA DE ALTA</th>
+                  <th>ESTADO</th>
+                  <th>ACCIÓN</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                  @for (socio of sociosFiltrados; track socio.id) {
+
+                    <tr>
+
+                      <!-- SOCIO -->
+
+                      <td>
+
+                        <div class="states-member">
+
+                          <div class="states-member-avatar">
+                            {{ socio.nombre.charAt(0).toUpperCase() }}
+                          </div>
+
+                          <div>
+                            <strong>
+                              {{ socio.nombre }} {{ socio.apellidos }}
+                            </strong>
+
+                            <span>
+                              {{ socio.email || 'Sin correo registrado' }}
+                            </span>
+                          </div>
+
+                        </div>
+
+                      </td>
+
+                      <!-- DNI -->
+
+                      <td>
+                        {{ socio.dni || '—' }}
+                      </td>
+
+                      <!-- PLAN -->
+
+                      <td>
+                        <span class="states-plan">
+                          {{ socio.plan?.nombre || 'Sin plan' }}
+                        </span>
+                      </td>
+
+                      <!-- FECHA DE ALTA -->
+
+                      <td>
+                        {{ formatearFecha(socio.fechaAlta) }}
+                      </td>
+
+                      <!-- ESTADO -->
+
+                      <td>
+
+                        @if (socio.activo) {
+
+                          <span class="state-badge active">
+                            <span></span>
+                            Activo
+                          </span>
+
+                        } @else {
+
+                          <span class="state-badge suspended">
+                            <span></span>
+                            Suspendido
+                          </span>
+
+                        }
+
+                      </td>
+
+                      <!-- ACCIÓN -->
+
+                      <td>
+
+                        <button
+                          type="button"
+                          class="state-action-button"
+                          [class.activate]="!socio.activo"
+                          [class.suspend]="socio.activo"
+                          [disabled]="socioProcesandoId === socio.id"
+                          (click)="cambiarEstado(socio)">
+
+                          @if (socioProcesandoId === socio.id) {
+
+                            Procesando...
+
+                          } @else {
+
+                            {{ socio.activo ? 'Suspender' : 'Reactivar' }}
+
+                          }
+
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <div class="states-table-footer">
+
+              <span>
+                Mostrando {{ sociosFiltrados.length }} socios
+              </span>
+
+              <span>
+                Total cargado: {{ socios.length }}
+              </span>
+
+            </div>
+
+          } @else {
+
+            <div class="states-empty">
+
+              <span>⌕</span>
+
+              <h3>No se encontraron socios</h3>
+
+              <p>
+                Prueba con otro nombre, DNI o filtro.
+              </p>
+
+            </div>
+          }
+        }
+      </section>
+    </div>
+  </main>
+</div>

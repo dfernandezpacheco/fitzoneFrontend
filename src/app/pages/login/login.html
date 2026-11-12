@@ -1,0 +1,121 @@
+<div class="login-container py-25">
+
+  <div class="login-card">
+
+    <!-- Columna izquierda: imagen -->
+    <div class="login-image-side">
+
+      <img
+        src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop"
+        alt="Instalaciones del gimnasio FitZone"
+      />
+
+      <div class="image-overlay">
+
+        <h3>Transforma tu cuerpo</h3>
+
+        <p>Accede a tus rutinas y sigue tu progreso diario.</p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Columna derecha: formulario -->
+    <div class="login-form-side">
+
+      <div class="form-header">
+
+        <h2>Bienvenido de nuevo</h2>
+
+        <p>Introduce tus credenciales para acceder a FitZone.</p>
+
+      </div>
+
+
+      <!-- Formulario de login -->
+      <form
+        class="login-form"
+        (ngSubmit)="onLogin()"
+        #loginForm="ngForm"
+      >
+
+        <!-- Nombre de usuario -->
+        <div class="form-group">
+
+          <label for="usuario">Nombre de usuario</label>
+
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            [(ngModel)]="usuario"
+            placeholder="Introduce tu nombre de usuario"
+            autocomplete="username"
+            required
+          />
+
+        </div>
+
+
+        <!-- Contraseña -->
+        <div class="form-group">
+
+          <div class="label-wrapper">
+
+            <label for="clave">Contraseña</label>
+
+          </div>
+
+          <input
+            type="password"
+            id="clave"
+            name="clave"
+            [(ngModel)]="clave"
+            placeholder="Introduce tu contraseña"
+            autocomplete="current-password"
+            required
+          />
+
+        </div>
+
+
+        <!-- Mensaje de error -->
+        @if (mensajeError) {
+
+          <p class="login-error" role="alert">
+            {{ mensajeError }}
+          </p>
+
+        }
+
+
+        <!-- Botón de iniciar sesión -->
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="cargando || loginForm.invalid"
+        >
+
+          {{ cargando ? 'Iniciando sesión...' : 'Ingresar' }}
+
+        </button>
+
+      </form>
+
+
+      <!-- Pie del formulario -->
+      <div class="form-footer">
+
+        <p>
+          ¿Aún no tienes cuenta?
+          <a routerLink="/registro">Únete a FitZone</a>
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,518 @@
+<div class="admin-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="admin-sidebar">
+
+    <div class="admin-logo">
+
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Administración</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="admin-nav">
+
+      <a class="admin-nav-item" href="/admin/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="admin-nav-item" href="/admin/planes">
+        <span>◇</span>
+        Planes
+      </a>
+
+      <a class="admin-nav-item" href="/admin/estados">
+        <span>◉</span>
+        Estados
+      </a>
+
+      <a class="admin-nav-item active" href="/admin/cuotas">
+        <span>€</span>
+        Cuotas
+      </a>
+
+      <a class="admin-nav-item">
+        <span>▤</span>
+        Informes
+      </a>
+
+    </nav>
+
+    <div class="sidebar-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO PRINCIPAL -->
+
+  <main class="admin-content">
+
+    <!-- CABECERA -->
+
+    <header class="admin-header">
+
+      <div>
+        <h2>Sesión Admin</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="admin-user">
+
+        <div class="admin-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Administrador</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="admin-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="admin-welcome">
+
+        <div>
+
+          <h1>Gestión de cuotas</h1>
+
+          <p>
+            Consulta los pagos, importes y estados de las cuotas
+            de los socios de FitZone.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="admin-back-button"
+          (click)="volverDashboard()">
+          ← Volver al dashboard
+        </button>
+
+      </section>
+
+
+      <!-- TARJETAS DE RESUMEN -->
+
+      <section class="quotas-summary">
+
+        <article class="quotas-summary-card">
+
+          <div class="quotas-card-icon blue">
+            €
+          </div>
+
+          <span>CUOTAS REGISTRADAS</span>
+
+          <strong>
+            {{ totalElementos }}
+          </strong>
+
+          <small>Total de cuotas en el sistema</small>
+
+        </article>
+
+
+        <article class="quotas-summary-card">
+
+          <div class="quotas-card-icon orange">
+            !
+          </div>
+
+          <span>CUOTAS PENDIENTES</span>
+
+          <strong>
+            {{ totalPendientes }}
+          </strong>
+
+          <small>Pendientes de pago</small>
+
+        </article>
+
+
+        <article class="quotas-summary-card">
+
+          <div class="quotas-card-icon green">
+            €
+          </div>
+
+          <span>INGRESOS DEL MES</span>
+
+          <strong>
+            {{ ingresosMes }}
+          </strong>
+
+          <small>Importe cobrado durante este mes</small>
+
+        </article>
+
+      </section>
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="quotas-error">
+
+          <p>{{ error }}</p>
+
+          <button
+            type="button"
+            (click)="cargarCuotas()">
+            Reintentar
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- LISTADO DE CUOTAS -->
+
+      <section class="admin-quotas-section">
+
+        <!-- CABECERA DEL LISTADO -->
+
+        <div class="quotas-section-header">
+
+          <div>
+            <h2>Listado de cuotas</h2>
+
+            <p>
+              Consulta las cuotas registradas y su situación actual.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="admin-refresh-button"
+            (click)="cargarCuotas()"
+            [disabled]="cargando">
+            ↻ Actualizar
+          </button>
+
+        </div>
+
+
+        <!-- BUSCADOR Y FILTROS -->
+
+        <div class="quotas-toolbar">
+
+          <div class="quotas-search">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              placeholder="Buscar por socio, DNI o plan..."
+              [value]="terminoBusqueda"
+              (input)="terminoBusqueda = $any($event.target).value">
+
+          </div>
+
+
+          <div class="quotas-filters">
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'TODOS'"
+              (click)="cambiarFiltro('TODOS')">
+              Todas
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'PAGADO'"
+              (click)="cambiarFiltro('PAGADO')">
+              Pagadas
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'PENDIENTE'"
+              (click)="cambiarFiltro('PENDIENTE')">
+              Pendientes
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'CANCELADO'"
+              (click)="cambiarFiltro('CANCELADO')">
+              Canceladas
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="quotas-loading">
+
+            <div class="quotas-spinner"></div>
+
+            <p>Cargando cuotas...</p>
+
+          </div>
+
+        }
+
+
+        <!-- TABLA -->
+
+        @if (!cargando && !error) {
+
+          @if (cuotasFiltradas.length > 0) {
+
+            <div class="quotas-table-container">
+
+              <table class="quotas-table">
+
+                <thead>
+
+                <tr>
+                  <th>SOCIO</th>
+                  <th>DNI</th>
+                  <th>PLAN</th>
+                  <th>PERIODO</th>
+                  <th>IMPORTE</th>
+                  <th>ESTADO</th>
+                  <th>FECHA DE PAGO</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                  @for (cuota of cuotasFiltradas; track cuota.id) {
+
+                    <tr>
+
+                      <!-- SOCIO -->
+
+                      <td>
+
+                        <div class="quotas-member">
+
+                          <div class="quotas-member-avatar">
+                            {{ (cuota.nombreSocio || '?').charAt(0).toUpperCase() }}
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              {{ cuota.nombreSocio }}
+                              {{ cuota.apellidosSocio }}
+                            </strong>
+
+                            <span>
+                              Socio #{{ cuota.socioId }}
+                            </span>
+
+                          </div>
+
+                        </div>
+
+                      </td>
+
+
+                      <!-- DNI -->
+
+                      <td>
+                        {{ cuota.dni || '—' }}
+                      </td>
+
+
+                      <!-- PLAN -->
+
+                      <td>
+
+                        <span class="quota-plan">
+                          {{ cuota.nombrePlan || 'Sin plan' }}
+                        </span>
+
+                      </td>
+
+
+                      <!-- PERIODO -->
+
+                      <td>
+
+                        <div class="quota-period">
+                          <strong>
+                            {{ formatearMes(cuota.mes) }}
+                          </strong>
+
+                          <span>
+                            {{ cuota.anio }}
+                          </span>
+                        </div>
+
+                      </td>
+
+
+                      <!-- IMPORTE -->
+
+                      <td>
+
+                        <strong class="quota-amount">
+                          {{ formatearImporte(cuota.importe) }}
+                        </strong>
+
+                      </td>
+
+
+                      <!-- ESTADO -->
+
+                      <td>
+
+                        @switch (cuota.estado.toUpperCase()) {
+
+                          @case ('PAGADO') {
+
+                            <span class="quota-status paid">
+                              <span></span>
+                              Pagado
+                            </span>
+
+                          }
+
+                          @case ('PENDIENTE') {
+
+                            <span class="quota-status pending">
+                              <span></span>
+                              Pendiente
+                            </span>
+
+                          }
+
+                          @case ('CANCELADO') {
+
+                            <span class="quota-status cancelled">
+                              <span></span>
+                              Cancelado
+                            </span>
+
+                          }
+
+                          @default {
+
+                            <span class="quota-status unknown">
+                              {{ cuota.estado }}
+                            </span>
+
+                          }
+
+                        }
+
+                      </td>
+
+
+                      <!-- FECHA DE PAGO -->
+
+                      <td>
+
+                        <span class="quota-payment-date">
+                          {{ formatearFechaPago(cuota.fechaPago) }}
+                        </span>
+
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+            <!-- PIE DE TABLA Y PAGINACIÓN -->
+
+            <div class="quotas-table-footer">
+
+              <div class="quotas-results">
+
+                Mostrando
+                <strong>{{ cuotasFiltradas.length }}</strong>
+                resultados en esta página.
+
+                Total registrado:
+                <strong>{{ totalElementos }}</strong>
+
+              </div>
+
+
+              <div class="quotas-pagination">
+
+                <button
+                  type="button"
+                  (click)="paginaAnterior()"
+                  [disabled]="paginaActual === 0 || cargando">
+                  ← Anterior
+                </button>
+
+                <span>
+                  Página {{ paginaVisible }} de {{ totalPaginas }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="paginaSiguiente()"
+                  [disabled]="paginaActual + 1 >= totalPaginas || cargando">
+                  Siguiente →
+                </button>
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="quotas-empty">
+              <span>€</span>
+              <h3>No se encontraron cuotas</h3>
+              <p>
+                Prueba con otro término de búsqueda o selecciona otro filtro.
+              </p>
+            </div>
+          }
+        }
+      </section>
+    </div>
+  </main>
+</div>

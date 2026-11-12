@@ -1,0 +1,66 @@
+<div class="ficha-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/fitzone-logo.png" alt="FitZone" />
+      <div><strong>FitZone</strong><span>Área de socio</span></div>
+    </div>
+
+    <span class="menu-title">NAVEGACIÓN</span>
+    <nav>
+      <a routerLink="/socio/dashboard" class="nav-item"><span>⌂</span>Inicio</a>
+      <a routerLink="/socio/mi-ficha" class="nav-item active"><span>◉</span>Mi ficha</a>
+      <button type="button" class="nav-item"><span>€</span>Cuotas</button>
+      <button type="button" class="nav-item"><span>✦</span>Actividades</button>
+      <button type="button" class="nav-item"><span>▣</span>Reservas</button>
+    </nav>
+
+    <div class="account">
+      <span class="menu-title">CUENTA</span>
+      <button type="button" class="nav-item logout" (click)="cerrarSesion()"><span>↪</span>Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="page-header">
+      <div><h1>Socio · Mi ficha</h1><p>FitZone · Área privada</p></div>
+      <div class="current-user"><span class="avatar">{{ inicial() }}</span><div><strong>{{ perfil()?.nombre || 'Socio' }}</strong><small>Usuario</small></div></div>
+    </header>
+
+    <section class="content">
+      <h2>Mi ficha</h2>
+      <p class="subtitle">Consulta y actualiza tus datos personales y preferencias.</p>
+
+      @if (cargando()) { <p class="state">Cargando tu ficha...</p> }
+      @if (error()) { <div class="error">{{ error() }} <button type="button" (click)="cargarFicha()">Reintentar</button></div> }
+
+      @if (perfil(); as socio) {
+        <div class="profile-grid">
+          <article class="profile-card">
+            <span class="large-avatar">{{ inicial() }}</span>
+            <h3>{{ socio.nombre }}</h3>
+            <strong class="member-plan">Socio {{ plan() }}</strong>
+            <span class="status" [class.inactive]="!socio.activo">{{ estado() }}</span>
+            <p>Socio desde {{ fechaAlta() }}</p>
+          </article>
+
+          <article class="details-card">
+            <h3>Datos personales</h3>
+            <dl>
+              <div><dt>Nombre</dt><dd>{{ nombreCompleto() }}</dd></div>
+              <div><dt>Email</dt><dd>{{ socio.email || '—' }}</dd></div>
+              <div><dt>Teléfono</dt><dd>{{ socio.telefono || '—' }}</dd></div>
+              <div><dt>Fecha de nacimiento</dt><dd>—</dd></div>
+              <div><dt>Preferencia</dt><dd>—</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <article class="preferences-card">
+          <h3>Preferencias y comunicación</h3>
+          <div class="preference-row"><p>Recibir recordatorios de clases y avisos de renovación</p><span class="status">ACTIVADO</span></div>
+          <small>Gestiona tus datos desde recepción si necesitas modificar información contractual.</small>
+        </article>
+      }
+    </section>
+  </main>
+</div>

@@ -1,0 +1,412 @@
+<div class="admin-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="admin-sidebar">
+
+    <div class="admin-logo">
+
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Administración</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="admin-nav">
+
+      <a class="admin-nav-item" href="/admin/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="admin-nav-item active" href="/admin/planes">
+        <span>◇</span>
+        Planes
+      </a>
+
+      <a class="admin-nav-item" href="/admin/estados">
+        <span>◉</span>
+        Estados
+      </a>
+
+      <a class="admin-nav-item" href="/admin/cuotas">
+        <span>€</span>
+        Cuotas
+      </a>
+
+      <a class="admin-nav-item">
+        <span>▤</span>
+        Informes
+      </a>
+
+    </nav>
+
+    <div class="sidebar-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="admin-content">
+
+    <header class="admin-header">
+
+      <div>
+        <h2>Sesión Admin</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="admin-user">
+
+        <div class="admin-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Administrador</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="admin-body">
+
+      <section class="admin-welcome">
+
+        <div>
+
+          <h1>Gestión de planes</h1>
+
+          <p>
+            Consulta, crea y modifica los planes de FitZone.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="admin-back-button"
+          (click)="volverDashboard()">
+          ← Volver al dashboard
+        </button>
+
+      </section>
+
+
+      <!-- RESUMEN -->
+
+      <section class="plans-summary">
+
+        <div class="plans-summary-card">
+
+          <span>PLANES REGISTRADOS</span>
+
+          <strong>{{ planes.length }}</strong>
+
+        </div>
+
+        <div class="plans-summary-card">
+
+          <span>SOCIOS INSCRITOS</span>
+
+          <strong>
+            {{ planes.length > 0 ? calcularTotalSocios() : '—' }}
+          </strong>
+
+        </div>
+
+      </section>
+
+
+      <!-- CABECERA DEL LISTADO -->
+
+      <section class="admin-plans-section">
+
+        <div class="plans-section-header">
+
+          <div>
+            <h2>Planes de FitZone</h2>
+            <p>Gestiona los precios y características de cada plan.</p>
+          </div>
+
+          <div class="plans-actions">
+
+            <button
+              type="button"
+              class="admin-refresh-button"
+              (click)="cargarPlanes()">
+              ↻ Actualizar
+            </button>
+
+            <button
+              type="button"
+              class="admin-create-button"
+              (click)="abrirCrear()">
+              + Nuevo plan
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="plans-message">
+            Cargando planes...
+          </div>
+
+        }
+
+
+        <!-- ERROR -->
+
+        @if (error) {
+
+          <div class="plans-error">
+
+            <p>{{ error }}</p>
+
+            <button
+              type="button"
+              (click)="cargarPlanes()">
+              Reintentar
+            </button>
+
+          </div>
+
+        }
+
+
+        <!-- LISTADO -->
+
+        @if (!cargando && !error) {
+
+          @if (planes.length > 0) {
+
+            <div class="admin-plans-grid">
+
+              @for (plan of planes; track plan.id) {
+
+                <article class="admin-plan-card">
+
+                  <div class="plan-card-top">
+
+                    <span class="plan-card-label">
+                      PLAN FITZONE
+                    </span>
+
+                    <span class="plan-card-icon">◇</span>
+
+                  </div>
+
+                  <h3>{{ plan.nombre }}</h3>
+
+                  <div class="plan-price">
+
+                    <strong>
+                      {{ formatearPrecio(plan.precioMensual) }}
+                    </strong>
+
+                    <span>/ mes</span>
+
+                  </div>
+
+                  <div class="plan-card-divider"></div>
+
+                  <div class="plan-members">
+
+                    <div class="plan-members-icon">♙</div>
+
+                    <div>
+                      <strong>{{ plan.sociosInscritos }}</strong>
+                      <span>Socios inscritos</span>
+                    </div>
+
+                  </div>
+
+                  <div class="plan-card-type">
+                    {{ plan.tipo }}
+                  </div>
+
+                  <button
+                    type="button"
+                    class="plan-edit-button"
+                    (click)="abrirEditar(plan)">
+                    ✎ Editar plan
+                  </button>
+
+                </article>
+
+              }
+
+            </div>
+
+          } @else {
+
+            <div class="plans-message">
+              Todavía no hay planes registrados.
+            </div>
+
+          }
+
+        }
+
+      </section>
+
+
+      <!-- FORMULARIO CREAR / EDITAR -->
+
+      @if (mostrarFormulario) {
+
+        <div class="plan-modal-overlay">
+
+          <section class="plan-modal">
+
+            <div class="plan-modal-header">
+
+              <div>
+
+                <h2>
+                  {{ modoEdicion ? 'Editar plan' : 'Crear nuevo plan' }}
+                </h2>
+
+                <p>
+                  Configura los datos del plan.
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                class="plan-modal-close"
+                (click)="cancelarFormulario()"
+                [disabled]="guardando">
+                ×
+              </button>
+
+            </div>
+
+
+            <form
+              #planForm="ngForm"
+              (ngSubmit)="guardarPlan()">
+
+              <div class="plan-form-group">
+
+                <label for="nombre">
+                  Nombre del plan
+                </label>
+
+                <input
+                  id="nombre"
+                  type="text"
+                  name="nombre"
+                  [(ngModel)]="formulario.nombre"
+                  placeholder="Ej. Premium"
+                  maxlength="80"
+                  required>
+
+              </div>
+
+
+              <div class="plan-form-group">
+
+                <label for="precio">
+                  Precio mensual (€)
+                </label>
+
+                <input
+                  id="precio"
+                  type="number"
+                  name="precioMensual"
+                  [(ngModel)]="formulario.precioMensual"
+                  min="0.01"
+                  step="0.01"
+                  required>
+
+              </div>
+
+
+              <div class="plan-form-group">
+
+                <label for="tipo">
+                  Tipo de plan
+                </label>
+
+                <select
+                  id="tipo"
+                  name="tipo"
+                  [(ngModel)]="formulario.tipo"
+                  required>
+
+                  @for (tipo of tiposPlan; track tipo) {
+
+                    <option [value]="tipo">
+                      {{ tipo }}
+                    </option>
+
+                  }
+
+                </select>
+
+              </div>
+
+              @if (mensaje) {
+
+                <div class="plan-form-message">
+                  {{ mensaje }}
+                </div>
+
+              }
+
+              <div class="plan-form-actions">
+                <button
+                  type="button"
+                  class="plan-cancel-button"
+                  (click)="cancelarFormulario()"
+                  [disabled]="guardando">
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="admin-create-button"
+                  [disabled]="guardando || planForm.invalid">
+                  @if (guardando) {
+                    Guardando...
+                  } @else {
+                    {{ modoEdicion ? 'Guardar cambios' : 'Crear plan' }}
+                  }
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      }
+    </div>
+  </main>
+</div>
