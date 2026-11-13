@@ -1,1 +1,385 @@
-<p>dashboard works!</p>
+<div class="reception-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="reception-sidebar">
+
+    <div class="reception-logo">
+
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Gestión de recepción</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="reception-nav">
+
+      <a class="reception-nav-item active">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="reception-nav-item" (click)="verSocios()">
+        <span>♙</span>
+        Socios
+      </a>
+
+      <a class="reception-nav-item" (click)="verPagos()">
+        <span>€</span>
+        Pagos
+      </a>
+
+      <a class="reception-nav-item" (click)="verTurnos()">
+        <span>◷</span>
+        Turnos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>▤</span>
+        Reservas
+      </a>
+
+    </nav>
+
+    <div class="reception-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button
+        type="button"
+        (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="reception-main">
+
+    <!-- CABECERA -->
+
+    <header class="reception-header">
+
+      <div>
+        <h2>Sesión Recepción</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="reception-user">
+
+        <div class="reception-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Recepción</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="reception-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="reception-welcome">
+
+        <div>
+          <h1>Panel de recepción</h1>
+
+          <p>
+            Gestiona socios, pagos y turnos desde un único lugar.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="reception-refresh"
+          (click)="cargarResumen()"
+          [disabled]="cargando">
+          ↻ Actualizar
+        </button>
+
+      </section>
+
+
+      <!-- CARGANDO -->
+
+      @if (cargando) {
+
+        <div class="reception-message">
+          Cargando información...
+        </div>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="reception-error">
+
+          <p>{{ error }}</p>
+
+          <button
+            type="button"
+            (click)="cargarResumen()">
+            Reintentar
+          </button>
+
+        </div>
+
+      }
+
+
+      @if (!cargando && resumen) {
+
+        <!-- INDICADORES -->
+
+        <section class="reception-stats">
+
+          <article class="reception-card">
+
+            <span>SOCIOS ACTIVOS</span>
+
+            <strong>
+              {{ resumen.sociosActivos }}
+            </strong>
+
+            <small>Miembros activos</small>
+
+          </article>
+
+
+          <article class="reception-card">
+
+            <span>PAGOS PENDIENTES</span>
+
+            <strong>
+              {{ resumen.pagosPendientes }}
+            </strong>
+
+            <small>Requieren atención</small>
+
+          </article>
+
+
+          <article class="reception-card">
+
+            <span>TURNOS HOY</span>
+
+            <strong>
+              {{ resumen.turnosHoy }}
+            </strong>
+
+            <small>Actividades programadas</small>
+
+          </article>
+
+
+          <article class="reception-card">
+
+            <span>RESERVAS HOY</span>
+
+            <strong>
+              {{ resumen.reservasHoy }}
+            </strong>
+
+            <small>Reservas de actividades de hoy</small>
+
+          </article>
+
+        </section>
+
+
+        <!-- GESTIÓN RÁPIDA -->
+
+        <section class="reception-section">
+
+          <h2>Gestión rápida</h2>
+
+          <div class="reception-actions">
+
+            <button
+              type="button"
+              class="reception-action"
+              (click)="verSocios()">
+
+              <strong>Gestionar socios</strong>
+
+              <span>Consultar los datos de los miembros</span>
+
+              <b>→</b>
+
+            </button>
+
+
+            <button
+              type="button"
+              class="reception-action"
+              (click)="verPagos()">
+
+              <strong>Registrar pago</strong>
+
+              <span>Consultar y gestionar cuotas</span>
+
+              <b>→</b>
+
+            </button>
+
+
+            <button
+              type="button"
+              class="reception-action"
+              (click)="verTurnos()">
+
+              <strong>Asignar turno</strong>
+
+              <span>Organizar los turnos del día</span>
+
+              <b>→</b>
+
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- SOCIOS RECIENTES -->
+
+        <section class="reception-section">
+
+          <div class="reception-section-header">
+
+            <div>
+              <h2>Socios recientes</h2>
+              <p>Últimas altas registradas en FitZone.</p>
+            </div>
+
+            <div class="reception-search">
+
+              <span>⌕</span>
+
+              <input
+                type="search"
+                placeholder="Buscar socio..."
+                [value]="busqueda"
+                (input)="busqueda = $any($event.target).value">
+
+            </div>
+
+          </div>
+
+
+          <div class="reception-table-container">
+
+            <table class="reception-table">
+
+              <thead>
+
+              <tr>
+                <th>SOCIO</th>
+                <th>PLAN</th>
+                <th>ESTADO</th>
+                <th>FECHA DE ALTA</th>
+              </tr>
+
+              </thead>
+
+              <tbody>
+
+                @for (socio of sociosFiltrados; track socio.id) {
+
+                  <tr>
+
+                    <td>
+
+                      <div class="reception-member">
+
+                        <div class="member-avatar">
+                          {{ socio.nombre.charAt(0).toUpperCase() }}
+                        </div>
+
+                        <div>
+                          <strong>
+                            {{ socio.nombre }} {{ socio.apellidos }}
+                          </strong>
+
+                          <span>
+                            {{ socio.email || 'Sin correo' }}
+                          </span>
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                    <td>
+                      {{ socio.plan?.nombre || 'Sin plan' }}
+                    </td>
+
+                    <td>
+
+                      @if (socio.activo) {
+
+                        <span class="member-status active">
+                          Activo
+                        </span>
+
+                      } @else {
+
+                        <span class="member-status suspended">
+                          Suspendido
+                        </span>
+
+                      }
+
+                    </td>
+
+                    <td>
+                      {{ formatearFecha(socio.fechaAlta) }}
+                    </td>
+
+                  </tr>
+
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          @if (sociosFiltrados.length === 0) {
+
+            <p class="reception-empty">
+              No se han encontrado socios.
+            </p>
+
+          }
+
+        </section>
+
+      }
+
+    </div>
+
+  </main>
+
+</div>

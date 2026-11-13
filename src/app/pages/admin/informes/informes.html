@@ -1,1 +1,698 @@
-<p>informes works!</p>
+<div class="admin-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="admin-sidebar">
+
+    <div class="admin-logo">
+
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Administración</span>
+      </div>
+
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="admin-nav">
+
+      <a class="admin-nav-item" href="/admin/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="admin-nav-item" href="/admin/planes">
+        <span>◇</span>
+        Planes
+      </a>
+
+      <a class="admin-nav-item" href="/admin/estados">
+        <span>◉</span>
+        Estados
+      </a>
+
+      <a class="admin-nav-item" href="/admin/cuotas">
+        <span>€</span>
+        Cuotas
+      </a>
+
+      <a class="admin-nav-item active" href="/admin/informes">
+        <span>▤</span>
+        Informes
+      </a>
+
+    </nav>
+
+    <div class="sidebar-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button
+        type="button"
+        class="logout-button"
+        (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO PRINCIPAL -->
+
+  <main class="admin-content">
+
+    <!-- CABECERA -->
+
+    <header class="admin-header">
+
+      <div>
+        <h2>Sesión Admin</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="admin-user">
+
+        <div class="admin-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Administrador</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="admin-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="admin-welcome">
+
+        <div>
+
+          <h1>Informes y estadísticas</h1>
+
+          <p>
+            Consulta la evolución económica y administrativa
+            de FitZone.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          class="admin-back-button"
+          (click)="volverDashboard()">
+          ← Volver al dashboard
+        </button>
+
+      </section>
+
+
+      <!-- SELECTOR DE AÑO Y DESCARGA -->
+
+      <section class="reports-toolbar">
+
+        <div class="reports-year-selector">
+
+          <label for="anioInforme">
+            AÑO DEL INFORME
+          </label>
+
+          <select
+            id="anioInforme"
+            [value]="anioSeleccionado"
+            (change)="cambiarAnio($event)">
+
+            @for (anio of aniosDisponibles; track anio) {
+
+              <option [value]="anio">
+                {{ anio }}
+              </option>
+
+            }
+
+          </select>
+
+        </div>
+
+        <button
+          type="button"
+          class="reports-download-button"
+          (click)="descargarCSV()"
+          [disabled]="!informe || cargando">
+          ↓ Descargar informe CSV
+        </button>
+
+      </section>
+
+
+      <!-- CARGANDO -->
+
+      @if (cargando) {
+
+        <div class="reports-loading">
+
+          <div class="reports-spinner"></div>
+
+          <p>Generando informe de FitZone...</p>
+
+        </div>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="reports-error">
+
+          <p>{{ error }}</p>
+
+          <button
+            type="button"
+            (click)="cargarInforme()">
+            Reintentar
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- INFORMACIÓN DEL INFORME -->
+
+      @if (!cargando && !error && informe) {
+
+        <div class="reports-content">
+
+
+          <!-- RESUMEN ECONÓMICO -->
+
+          <section class="reports-section">
+
+            <div class="reports-section-heading">
+
+              <div>
+                <h2>Resumen económico</h2>
+
+                <p>
+                  Actividad económica correspondiente a {{ informe.anio }}.
+                </p>
+              </div>
+
+              <span class="reports-year-badge">
+                AÑO {{ informe.anio }}
+              </span>
+
+            </div>
+
+
+            <div class="reports-stats-grid">
+
+
+              <!-- INGRESOS ANUALES -->
+
+              <article class="reports-stat-card">
+
+                <div class="reports-stat-icon blue">
+                  €
+                </div>
+
+                <span>INGRESOS ANUALES</span>
+
+                <strong>
+                  {{ ingresosAnuales }}
+                </strong>
+
+                <small>
+                  Total realmente cobrado
+                </small>
+
+              </article>
+
+
+              <!-- CUOTAS TOTALES -->
+
+              <article class="reports-stat-card">
+
+                <div class="reports-stat-icon purple">
+                  ▤
+                </div>
+
+                <span>TOTAL CUOTAS</span>
+
+                <strong>
+                  {{ totalCuotas }}
+                </strong>
+
+                <small>
+                  Cuotas registradas en el año
+                </small>
+
+              </article>
+
+
+              <!-- CUOTAS PAGADAS -->
+
+              <article class="reports-stat-card">
+
+                <div class="reports-stat-icon green">
+                  ✓
+                </div>
+
+                <span>CUOTAS PAGADAS</span>
+
+                <strong>
+                  {{ informe.cuotasPagadas }}
+                </strong>
+
+                <small>
+                  {{ porcentajePagadas }}% del total
+                </small>
+
+              </article>
+
+
+              <!-- CUOTAS PENDIENTES -->
+
+              <article class="reports-stat-card">
+
+                <div class="reports-stat-icon orange">
+                  !
+                </div>
+
+                <span>CUOTAS PENDIENTES</span>
+
+                <strong>
+                  {{ informe.cuotasPendientes }}
+                </strong>
+
+                <small>
+                  {{ porcentajePendientes }}% del total
+                </small>
+
+              </article>
+
+
+            </div>
+
+          </section>
+
+
+          <!-- EVOLUCIÓN MENSUAL DE INGRESOS -->
+
+          <section class="reports-section">
+
+            <div class="reports-section-heading">
+
+              <div>
+                <h2>Evolución de ingresos</h2>
+
+                <p>
+                  Importe cobrado durante cada mes de {{ informe.anio }}.
+                </p>
+              </div>
+
+            </div>
+
+
+            <article class="reports-panel">
+
+              <div class="reports-chart-header">
+
+                <div>
+                  <span>INGRESOS TOTALES DEL AÑO</span>
+
+                  <strong>
+                    {{ ingresosAnuales }}
+                  </strong>
+                </div>
+
+                <span class="reports-chart-indicator">
+                  ● Datos reales
+                </span>
+
+              </div>
+
+
+              <!-- GRÁFICO DE INGRESOS -->
+
+              <div class="reports-chart">
+
+                @for (
+                  mes of informe.ingresosMensuales;
+                  track mes.mes
+                  ) {
+
+                  <div class="reports-chart-column">
+
+                    <div class="reports-chart-bar-area">
+
+                      @if (mes.ingresos > 0) {
+
+                        <span class="reports-bar-value">
+                          {{ formatearEuro(mes.ingresos) }}
+                        </span>
+
+                      }
+
+                      <div
+                        class="reports-chart-bar"
+                        [style.height.%]="obtenerAnchoBarra(mes.ingresos)">
+                      </div>
+
+                    </div>
+
+                    <span class="reports-chart-month">
+                      {{ obtenerNombreMes(mes.mes).substring(0, 3) }}
+                    </span>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <div class="reports-chart-legend">
+                <span></span>
+                Ingresos cobrados (€)
+              </div>
+
+            </article>
+
+          </section>
+
+
+          <!-- EVOLUCIÓN DE ALTAS DE SOCIOS -->
+
+          <section class="reports-section">
+
+            <div class="reports-section-heading">
+
+              <div>
+                <h2>Altas de socios</h2>
+
+                <p>
+                  Nuevos socios registrados durante {{ informe.anio }}.
+                </p>
+              </div>
+
+              <span class="reports-year-badge">
+                {{ informe.totalAltasAnio }} ALTAS
+              </span>
+
+            </div>
+
+
+            <article class="reports-panel">
+
+              <div class="reports-chart-header">
+
+                <div>
+                  <span>TOTAL DE NUEVOS SOCIOS</span>
+
+                  <strong>
+                    {{ informe.totalAltasAnio }}
+                  </strong>
+                </div>
+
+                <span class="reports-chart-indicator">
+                  ● Datos reales
+                </span>
+
+              </div>
+
+
+              <!-- GRÁFICO DE ALTAS -->
+
+              <div class="reports-chart">
+
+                @for (
+                  mes of informe.altasMensuales;
+                  track mes.mes
+                  ) {
+
+                  <div class="reports-chart-column">
+
+                    <div class="reports-chart-bar-area">
+
+                      @if (mes.altas > 0) {
+
+                        <span class="reports-bar-value">
+                          {{ mes.altas }}
+                        </span>
+
+                      }
+
+                      <div
+                        class="reports-chart-bar reports-altas-bar"
+                        [style.height.%]="obtenerAlturaBarraAltas(mes.altas)">
+                      </div>
+
+                    </div>
+
+                    <span class="reports-chart-month">
+                      {{ obtenerNombreMes(mes.mes).substring(0, 3) }}
+                    </span>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <div class="reports-chart-legend">
+                <span></span>
+                Nuevas altas de socios
+              </div>
+
+            </article>
+
+          </section>
+
+
+          <!-- ESTADO DE LAS CUOTAS -->
+
+          <section class="reports-section">
+
+            <div class="reports-section-heading">
+
+              <div>
+                <h2>Estado de las cuotas</h2>
+
+                <p>
+                  Distribución de los estados de pago durante {{ informe.anio }}.
+                </p>
+              </div>
+
+            </div>
+
+
+            <article class="reports-panel">
+
+              <div class="reports-quota-summary">
+
+
+                <!-- PAGADAS -->
+
+                <div class="reports-quota-row">
+
+                  <div class="reports-quota-heading">
+
+                    <div class="reports-quota-label">
+
+                      <span class="quota-dot green"></span>
+
+                      <strong>Pagadas</strong>
+
+                    </div>
+
+                    <strong>
+                      {{ informe.cuotasPagadas }}
+                      ({{ porcentajePagadas }}%)
+                    </strong>
+
+                  </div>
+
+                  <div class="reports-progress-track">
+
+                    <div
+                      class="reports-progress-fill green"
+                      [style.width.%]="porcentajePagadas">
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- PENDIENTES -->
+
+                <div class="reports-quota-row">
+
+                  <div class="reports-quota-heading">
+
+                    <div class="reports-quota-label">
+
+                      <span class="quota-dot orange"></span>
+
+                      <strong>Pendientes</strong>
+
+                    </div>
+
+                    <strong>
+                      {{ informe.cuotasPendientes }}
+                      ({{ porcentajePendientes }}%)
+                    </strong>
+
+                  </div>
+
+                  <div class="reports-progress-track">
+
+                    <div
+                      class="reports-progress-fill orange"
+                      [style.width.%]="porcentajePendientes">
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- CANCELADAS -->
+
+                <div class="reports-quota-row">
+
+                  <div class="reports-quota-heading">
+
+                    <div class="reports-quota-label">
+
+                      <span class="quota-dot red"></span>
+
+                      <strong>Canceladas</strong>
+
+                    </div>
+
+                    <strong>
+                      {{ informe.cuotasCanceladas }}
+                      ({{ porcentajeCanceladas }}%)
+                    </strong>
+
+                  </div>
+
+                  <div class="reports-progress-track">
+
+                    <div
+                      class="reports-progress-fill red"
+                      [style.width.%]="porcentajeCanceladas">
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- TOTAL -->
+
+              <div class="reports-quota-footer">
+
+                <span>Total de cuotas registradas</span>
+
+                <strong>
+                  {{ informe.totalCuotas }}
+                </strong>
+
+              </div>
+
+            </article>
+
+          </section>
+
+
+          <!-- INFORMACIÓN DEL INFORME -->
+
+          <section class="reports-information">
+
+            <div class="reports-information-icon">
+              i
+            </div>
+
+            <div>
+
+              <strong>Información de los datos</strong>
+
+              <p>
+                Los ingresos se calculan utilizando la fecha efectiva
+                de pago de las cuotas cuyo estado es PAGADO.
+                Las cuotas pendientes y canceladas no se contabilizan
+                como ingresos. Las altas de socios se calculan mediante
+                la fecha de alta registrada en PostgreSQL.
+              </p>
+
+            </div>
+
+          </section>
+
+
+          <!-- ACCIONES INFERIORES -->
+
+          <section class="reports-bottom-actions">
+
+            <div>
+
+              <h3>¿Necesitas guardar estos resultados?</h3>
+
+              <p>
+                Puedes descargar el informe anual en formato CSV
+                y abrirlo con Excel.
+              </p>
+
+            </div>
+
+            <button
+              type="button"
+              class="reports-download-button"
+              (click)="descargarCSV()">
+              ↓ Descargar informe
+            </button>
+
+          </section>
+
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- PIE -->
+
+    <footer class="admin-footer">
+
+      <span>FITZONE · Panel de administración</span>
+
+      <span>Informes y estadísticas</span>
+
+    </footer>
+
+  </main>
+
+</div>

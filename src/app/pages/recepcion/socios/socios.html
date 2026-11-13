@@ -1,0 +1,613 @@
+<div class="reception-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="reception-sidebar">
+
+    <div class="reception-logo">
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Gestión de recepción</span>
+      </div>
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="reception-nav">
+
+      <a class="reception-nav-item"
+         href="/recepcion/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="reception-nav-item active"
+         href="/recepcion/socios">
+        <span>♙</span>
+        Socios
+      </a>
+
+      <a class="reception-nav-item" href="/recepcion/pagos">
+        <span>€</span>
+        Pagos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>◷</span>
+        Turnos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>▤</span>
+        Reservas
+      </a>
+
+    </nav>
+
+    <div class="reception-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button type="button" (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO PRINCIPAL -->
+
+  <main class="reception-main">
+
+    <!-- CABECERA -->
+
+    <header class="reception-header">
+
+      <div>
+        <h2>Gestión de socios</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="reception-user">
+
+        <div class="reception-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Recepción</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="reception-body">
+
+      <!-- TÍTULO -->
+
+      <section class="reception-welcome">
+
+        <div>
+          <h1>Socios de FitZone</h1>
+
+          <p>
+            Consulta los miembros y registra nuevas altas.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="reception-refresh"
+          (click)="volverDashboard()">
+          ← Volver
+        </button>
+
+      </section>
+
+
+      <!-- MENSAJE DE ÉXITO -->
+
+      @if (mensaje) {
+
+        <div class="member-success">
+          ✓ {{ mensaje }}
+        </div>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="member-error">
+          <p>{{ error }}</p>
+
+          @if (!mostrarFormulario) {
+            <button type="button" (click)="cargarDatos()">
+              Reintentar
+            </button>
+          }
+        </div>
+
+      }
+
+
+      <!-- RESUMEN -->
+
+      <section class="members-summary">
+
+        <article class="members-summary-card">
+
+          <span>TOTAL DE SOCIOS</span>
+
+          <strong>{{ totalSocios }}</strong>
+
+          <small>Registros encontrados</small>
+
+        </article>
+
+
+        <article class="members-summary-card">
+
+          <span>ACTIVOS EN ESTA PÁGINA</span>
+
+          <strong class="green-text">
+            {{ sociosActivos }}
+          </strong>
+
+          <small>Con estado activo</small>
+
+        </article>
+
+
+        <article class="members-summary-card">
+
+          <span>SUSPENDIDOS EN ESTA PÁGINA</span>
+
+          <strong class="red-text">
+            {{ sociosSuspendidos }}
+          </strong>
+
+          <small>Con estado suspendido</small>
+
+        </article>
+
+      </section>
+
+
+      <!-- LISTADO -->
+
+      <section class="members-section">
+
+        <div class="members-section-header">
+
+          <div>
+            <h2>Listado de socios</h2>
+
+            <p>
+              Consulta los datos registrados en FitZone.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="member-create-button"
+            (click)="abrirFormulario()">
+            + Nuevo socio
+          </button>
+
+        </div>
+
+
+        <!-- BUSCADOR Y FILTROS -->
+
+        <div class="members-toolbar">
+
+          <div class="members-search">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              placeholder="Buscar por nombre, DNI o email..."
+              [value]="terminoBusqueda"
+              (input)="terminoBusqueda = $any($event.target).value">
+
+          </div>
+
+
+          <div class="members-filters">
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'TODOS'"
+              (click)="cambiarFiltro('TODOS')">
+              Todos
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'ACTIVOS'"
+              (click)="cambiarFiltro('ACTIVOS')">
+              Activos
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'SUSPENDIDOS'"
+              (click)="cambiarFiltro('SUSPENDIDOS')">
+              Suspendidos
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="members-loading">
+            Cargando socios...
+          </div>
+
+        }
+
+
+        <!-- TABLA -->
+
+        @if (!cargando && !error) {
+
+          @if (sociosFiltrados.length > 0) {
+
+            <div class="members-table-container">
+
+              <table class="members-table">
+
+                <thead>
+
+                <tr>
+                  <th>SOCIO</th>
+                  <th>DNI</th>
+                  <th>TELÉFONO</th>
+                  <th>PLAN</th>
+                  <th>FECHA DE ALTA</th>
+                  <th>ESTADO</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                  @for (socio of sociosFiltrados; track socio.id) {
+
+                    <tr>
+
+                      <td>
+
+                        <div class="member-data">
+
+                          <div class="member-avatar">
+                            {{ socio.nombre.charAt(0).toUpperCase() }}
+                          </div>
+
+                          <div>
+                            <strong>
+                              {{ socio.nombre }} {{ socio.apellidos }}
+                            </strong>
+
+                            <span>
+                              {{ socio.email }}
+                            </span>
+                          </div>
+
+                        </div>
+
+                      </td>
+
+                      <td>{{ socio.dni }}</td>
+
+                      <td>
+
+                        <span class="member-plan">
+                          {{ socio.plan?.nombre || 'Sin plan' }}
+                        </span>
+
+                      </td>
+
+                      <td>
+                        {{ formatearFecha(socio.fechaAlta) }}
+                      </td>
+
+                      <td>
+
+                        @if (socio.activo) {
+
+                          <span class="member-state active">
+                            ● Activo
+                          </span>
+
+                        } @else {
+
+                          <span class="member-state suspended">
+                            ● Suspendido
+                          </span>
+
+                        }
+
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+            <!-- PAGINACIÓN -->
+
+            <div class="members-pagination">
+
+              <span>
+                {{ totalSocios }} socios registrados
+              </span>
+
+              <div>
+
+                <button
+                  type="button"
+                  (click)="paginaAnterior()"
+                  [disabled]="paginaActual === 0 || cargando">
+                  ← Anterior
+                </button>
+
+                <span>
+                  Página {{ paginaVisible }} de {{ totalPaginas }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="paginaSiguiente()"
+                  [disabled]="paginaActual + 1 >= totalPaginas || cargando">
+                  Siguiente →
+                </button>
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="members-empty">
+
+              <span>♙</span>
+
+              <h3>No se han encontrado socios</h3>
+
+              <p>
+                Prueba con otro término de búsqueda o filtro.
+              </p>
+
+            </div>
+
+          }
+
+        }
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- MODAL DE ALTA -->
+
+  @if (mostrarFormulario) {
+
+    <div class="member-modal-overlay">
+
+      <section class="member-modal">
+
+        <div class="member-modal-header">
+
+          <div>
+            <h2>Registrar nuevo socio</h2>
+
+            <p>
+              Introduce los datos personales y selecciona un plan.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="member-modal-close"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando">
+            ×
+          </button>
+
+        </div>
+
+
+        <form
+          #socioForm="ngForm"
+          (ngSubmit)="guardarSocio()">
+
+
+          <div class="member-form-grid">
+
+            <div class="member-form-group">
+
+              <label for="dni">DNI *</label>
+
+              <input
+                id="dni"
+                type="text"
+                name="dni"
+                [(ngModel)]="formulario.dni"
+                placeholder="12345678Z"
+                maxlength="9"
+                required>
+
+            </div>
+
+
+            <div class="member-form-group">
+
+              <label for="nombre">Nombre *</label>
+
+              <input
+                id="nombre"
+                type="text"
+                name="nombre"
+                [(ngModel)]="formulario.nombre"
+                placeholder="Nombre"
+                required>
+
+            </div>
+
+
+            <div class="member-form-group">
+
+              <label for="apellidos">Apellidos *</label>
+
+              <input
+                id="apellidos"
+                type="text"
+                name="apellidos"
+                [(ngModel)]="formulario.apellidos"
+                placeholder="Apellidos"
+                required>
+
+            </div>
+
+
+            <div class="member-form-group">
+
+              <label for="email">Correo electrónico *</label>
+
+              <input
+                id="email"
+                type="email"
+                name="email"
+                [(ngModel)]="formulario.email"
+                placeholder="socio@email.com"
+                required>
+
+            </div>
+
+
+            <div class="member-form-group">
+
+              <label for="telefono">Teléfono</label>
+
+              <input
+                id="telefono"
+                type="tel"
+                name="telefono"
+                [(ngModel)]="formulario.telefono"
+                placeholder="600000000">
+
+            </div>
+
+
+            <div class="member-form-group">
+
+              <label for="matricula">Matrícula</label>
+
+              <input
+                id="matricula"
+                type="text"
+                name="matricula"
+                [(ngModel)]="formulario.matricula"
+                placeholder="1234BCD"
+                maxlength="7">
+
+            </div>
+
+
+            <div class="member-form-group full-width">
+
+              <label for="planId">Plan contratado *</label>
+
+              <select
+                id="planId"
+                name="planId"
+                [(ngModel)]="formulario.planId"
+                required>
+
+                <option [ngValue]="0">
+                  Selecciona un plan
+                </option>
+
+                @for (plan of planes; track plan.id) {
+
+                  <option [ngValue]="plan.id">
+                    {{ plan.nombre }} -
+                    {{ formatearPrecio(plan.precioMensual) }}
+                  </option>
+
+                }
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div class="member-form-note">
+            * Los campos marcados son obligatorios.
+          </div>
+
+
+          <div class="member-form-actions">
+
+            <button
+              type="button"
+              class="member-cancel-button"
+              (click)="cerrarFormulario()"
+              [disabled]="guardando">
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="member-create-button"
+              [disabled]="guardando || socioForm.invalid || formulario.planId <= 0">
+
+              @if (guardando) {
+                Registrando...
+              } @else {
+                Registrar socio
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+    </div>
+
+  }
+
+</div>

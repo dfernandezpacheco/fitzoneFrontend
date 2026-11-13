@@ -1,5 +1,33 @@
 <div class="login-container py-25">
 
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F17]/80 backdrop-blur-md border-b border-[#1E293B]">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2">
+        <div class="w-10 h-10 bg-[#2563EB] rounded-lg flex items-center justify-center font-bold text-white text-xl">
+          FZ
+        </div>
+        <span class="font-bold text-xl text-white tracking-wide">FitZone</span>
+      </a>
+
+      <!-- Navegación Central -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Inicio</a>
+        <a routerLink="/clases" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Clases</a>
+        <a routerLink="/membresia" routerLinkActive="font-bold text-white" class="text-[#94A3B8] hover:text-white transition-colors">Membresia</a>
+      </nav>
+
+      <!-- Botones Derecha -->
+      <div class="flex items-center gap-4">
+        <a href="../login" class="text-sm font-medium text-white hover:text-[#94A3B8] transition-colors">Ingresar</a>
+        <a href="#" class="bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all">
+          Comenzar
+        </a>
+      </div>
+    </div>
+
+  </header>
+
   <div class="login-card">
 
     <!-- Columna izquierda: imagen -->
@@ -117,5 +145,51 @@
     </div>
 
   </div>
+
+  <footer class="bg-[#0B0F17] border-t border-[#1E293B] py-12 text-[#94A3B8]">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-between">
+      <!-- Columna Izquierda -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-[#2563EB] rounded-lg flex items-center justify-center font-bold text-white text-sm">
+            FZ
+          </div>
+          <span class="font-bold text-lg text-white">FitZone</span>
+        </div>
+        <p class="text-sm max-w-sm mb-4">
+          Transformamos tu estilo de vida mediante entrenamiento de calidad, tecnología y asesoramiento especializado.
+        </p>
+        <a href="mailto:contacto@fitzone.com" class="text-xs text-[#2563EB] hover:underline flex items-center gap-2">
+          <i class="fa-regular fa-envelope"></i> contacto&#64;fitzone.com
+        </a>
+      </div>
+
+      <!-- Columna Derecha -->
+      <div class="flex flex-col md:items-end justify-between gap-6">
+        <div class="text-sm">
+          <p class="text-white font-semibold mb-1">Contacto</p>
+          <p class="text-xs">Calle Entrenamiento 123</p>
+          <p class="text-xs">+34 900 000 000</p>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="flex items-center gap-4 text-lg">
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" class="hover:text-white transition-colors"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 mt-8 pt-6 border-t border-[#1E293B]/50 text-xs text-center md:text-left flex flex-col md:flex-row justify-between gap-4">
+      <p>&copy; 2026 FitZone. Todos los derechos reservados.</p>
+      <div class="flex gap-4 justify-center md:justify-start">
+        <a href="#" class="hover:text-white">Privacidad</a>
+        <a href="#" class="hover:text-white">Términos</a>
+        <a href="#" class="hover:text-white">Cookies</a>
+      </div>
+    </div>
+  </footer>
 
 </div>

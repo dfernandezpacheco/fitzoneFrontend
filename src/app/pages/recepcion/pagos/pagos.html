@@ -1,0 +1,526 @@
+<div class="reception-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="reception-sidebar">
+
+    <div class="reception-logo">
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Gestión de recepción</span>
+      </div>
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="reception-nav">
+
+      <a class="reception-nav-item" href="/recepcion/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="reception-nav-item" href="/recepcion/socios">
+        <span>♙</span>
+        Socios
+      </a>
+
+      <a class="reception-nav-item active" href="/recepcion/pagos">
+        <span>€</span>
+        Pagos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>◷</span>
+        Turnos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>▤</span>
+        Reservas
+      </a>
+
+    </nav>
+
+    <div class="reception-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button type="button" (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="reception-main">
+
+    <!-- CABECERA -->
+
+    <header class="reception-header">
+
+      <div>
+        <h2>Gestión de pagos</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="reception-user">
+
+        <div class="reception-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Recepción</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="reception-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="reception-welcome">
+
+        <div>
+          <h1>Pagos y cuotas</h1>
+
+          <p>
+            Consulta las cuotas y registra los cobros de los socios.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="reception-refresh"
+          (click)="volverDashboard()">
+          ← Volver
+        </button>
+
+      </section>
+
+
+      <!-- MENSAJE DE ÉXITO -->
+
+      @if (mensaje) {
+
+        <div class="payment-success">
+          ✓ {{ mensaje }}
+        </div>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="payment-error">
+          <p>{{ error }}</p>
+
+          <button
+            type="button"
+            (click)="cargarDatos()">
+            Reintentar
+          </button>
+        </div>
+
+      }
+
+
+      <!-- RESUMEN -->
+
+      @if (resumen) {
+
+        <section class="payments-summary">
+
+          <article class="payment-summary-card">
+
+            <span>TOTAL DE CUOTAS</span>
+
+            <strong>
+              {{ resumen.totalCuotas }}
+            </strong>
+
+            <small>Cuotas registradas</small>
+
+          </article>
+
+
+          <article class="payment-summary-card">
+
+            <span>CUOTAS PAGADAS</span>
+
+            <strong class="green-text">
+              {{ resumen.cuotasPagadas }}
+            </strong>
+
+            <small>Cobros realizados</small>
+
+          </article>
+
+
+          <article class="payment-summary-card">
+
+            <span>CUOTAS PENDIENTES</span>
+
+            <strong class="orange-text">
+              {{ resumen.cuotasPendientes }}
+            </strong>
+
+            <small>Pendientes de cobro</small>
+
+          </article>
+
+
+          <article class="payment-summary-card">
+
+            <span>CUOTAS CANCELADAS</span>
+
+            <strong class="red-text">
+              {{ resumen.cuotasCanceladas }}
+            </strong>
+
+            <small>No cobrables</small>
+
+          </article>
+
+        </section>
+
+      }
+
+
+      <!-- LISTADO -->
+
+      <section class="payments-section">
+
+        <div class="payments-section-header">
+
+          <div>
+            <h2>Listado de cuotas</h2>
+
+            <p>
+              Consulta los pagos y registra nuevos cobros.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="reception-refresh"
+            (click)="cargarDatos()"
+            [disabled]="cargando">
+            ↻ Actualizar
+          </button>
+
+        </div>
+
+
+        <!-- BUSCADOR -->
+
+        <div class="payments-toolbar">
+
+          <div class="payments-search">
+
+            <span>⌕</span>
+
+            <input
+              type="search"
+              placeholder="Buscar por socio, DNI o plan..."
+              [value]="terminoBusqueda"
+              (input)="terminoBusqueda = $any($event.target).value">
+
+          </div>
+
+
+          <div class="payments-filters">
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'TODOS'"
+              (click)="cambiarFiltro('TODOS')">
+              Todas
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'PENDIENTE'"
+              (click)="cambiarFiltro('PENDIENTE')">
+              Pendientes
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'PAGADO'"
+              (click)="cambiarFiltro('PAGADO')">
+              Pagadas
+            </button>
+
+            <button
+              type="button"
+              [class.active]="filtroEstado === 'CANCELADO'"
+              (click)="cambiarFiltro('CANCELADO')">
+              Canceladas
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="payments-loading">
+            Cargando cuotas...
+          </div>
+
+        }
+
+
+        <!-- TABLA -->
+
+        @if (!cargando && !error) {
+
+          @if (cuotasFiltradas.length > 0) {
+
+            <div class="payments-table-container">
+
+              <table class="payments-table">
+
+                <thead>
+
+                <tr>
+                  <th>SOCIO</th>
+                  <th>DNI</th>
+                  <th>PLAN</th>
+                  <th>PERIODO</th>
+                  <th>IMPORTE</th>
+                  <th>ESTADO</th>
+                  <th>FECHA DE PAGO</th>
+                  <th>ACCIÓN</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                  @for (cuota of cuotasFiltradas; track cuota.id) {
+
+                    <tr>
+
+                      <!-- SOCIO -->
+
+                      <td>
+
+                        <div class="payment-member">
+
+                          <div class="payment-avatar">
+                            {{ (cuota.nombreSocio || '?').charAt(0).toUpperCase() }}
+                          </div>
+
+                          <div>
+                            <strong>
+                              {{ cuota.nombreSocio }}
+                              {{ cuota.apellidosSocio }}
+                            </strong>
+
+                            <span>
+                              Socio #{{ cuota.socioId }}
+                            </span>
+                          </div>
+
+                        </div>
+
+                      </td>
+
+
+                      <!-- DNI -->
+
+                      <td>
+                        {{ cuota.dni || '—' }}
+                      </td>
+
+
+                      <!-- PLAN -->
+
+                      <td>
+                        <span class="payment-plan">
+                          {{ cuota.nombrePlan || 'Sin plan' }}
+                        </span>
+                      </td>
+
+
+                      <!-- PERIODO -->
+
+                      <td>
+                        <div class="payment-period">
+                          <strong>{{ formatearMes(cuota.mes) }}</strong>
+                          <span>{{ cuota.anio }}</span>
+                        </div>
+                      </td>
+
+
+                      <!-- IMPORTE -->
+
+                      <td>
+                        <strong class="payment-amount">
+                          {{ formatearImporte(cuota.importe) }}
+                        </strong>
+                      </td>
+
+
+                      <!-- ESTADO -->
+
+                      <td>
+
+                        @switch (cuota.estado.toUpperCase()) {
+
+                          @case ('PAGADO') {
+                            <span class="payment-status paid">
+                              <span></span>
+                              Pagado
+                            </span>
+                          }
+
+                          @case ('PENDIENTE') {
+                            <span class="payment-status pending">
+                              <span></span>
+                              Pendiente
+                            </span>
+                          }
+
+                          @case ('CANCELADO') {
+                            <span class="payment-status cancelled">
+                              <span></span>
+                              Cancelado
+                            </span>
+                          }
+
+                          @default {
+                            <span class="payment-status unknown">
+                              {{ cuota.estado }}
+                            </span>
+                          }
+
+                        }
+
+                      </td>
+
+
+                      <!-- FECHA -->
+
+                      <td>
+                        <span class="payment-date">
+                          {{ formatearFechaPago(cuota) }}
+                        </span>
+                      </td>
+
+
+                      <!-- ACCIÓN -->
+
+                      <td>
+
+                        @if (cuota.estado.toUpperCase() === 'PENDIENTE') {
+
+                          <button
+                            type="button"
+                            class="register-payment-button"
+                            [disabled]="cuotaProcesandoId === cuota.id"
+                            (click)="registrarPago(cuota)">
+
+                            @if (cuotaProcesandoId === cuota.id) {
+                              Procesando...
+                            } @else {
+                              Registrar cobro
+                            }
+
+                          </button>
+
+                        } @else if (cuota.estado.toUpperCase() === 'PAGADO') {
+
+                          <span class="payment-completed">
+                            ✓ Cobrado
+                          </span>
+
+                        } @else {
+
+                          <span class="payment-not-available">
+                            No disponible
+                          </span>
+
+                        }
+
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <div class="payments-pagination">
+
+              <span>
+                Total: {{ totalElementos }} cuotas
+              </span>
+
+              <div>
+
+                <button
+                  type="button"
+                  (click)="paginaAnterior()"
+                  [disabled]="paginaActual === 0 || cargando">
+                  ← Anterior
+                </button>
+
+                <span>
+                  Página {{ paginaVisible }} de {{ totalPaginas }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="paginaSiguiente()"
+                  [disabled]="paginaActual + 1 >= totalPaginas || cargando">
+                  Siguiente →
+                </button>
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="payments-empty">
+
+              <span>€</span>
+
+              <h3>No se encontraron cuotas</h3>
+
+              <p>
+                No hay resultados para el filtro o búsqueda seleccionados.
+              </p>
+
+            </div>
+          }
+        }
+      </section>
+    </div>
+  </main>
+</div>

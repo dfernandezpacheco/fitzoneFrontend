@@ -73,19 +73,26 @@ export interface PaginaCuotasAdmin {
   size: number;
 }
 
-export interface IngresoMensualDto {
+export interface IngresoMensual {
   mes: number;
-  nombreMes: string;
-  total: number;
+  ingresos: number;
 }
 
-export interface InformeAdminDto {
+export interface InformeAdmin {
   anio: number;
   ingresosAnio: number;
   cuotasPagadas: number;
   cuotasPendientes: number;
   cuotasCanceladas: number;
-  ingresosMensuales: IngresoMensualDto[];
+  totalCuotas: number;
+  ingresosMensuales: IngresoMensual[];
+  totalAltasAnio: number;
+  altasMensuales: AltaMensual[];
+}
+
+export interface AltaMensual {
+  mes: number;
+  altas: number;
 }
 
 @Injectable({
@@ -156,12 +163,14 @@ export class AdminService {
       `${this.apiUrl}/cuotas?page=${pagina}&size=${tamanio}`
     );
   }
-  obtenerInforme(anio?: number): Observable<InformeAdminDto> {
-    let url = `${this.apiUrl}/informes`;
-    if (anio) {
-      url += `?anio=${anio}`;
-    }
-    return this.http.get<InformeAdminDto>(url);
-  }
 
+  obtenerInforme(anio?: number): Observable<InformeAdmin> {
+
+    const url = anio
+      ? `${this.apiUrl}/informes?anio=${anio}`
+      : `${this.apiUrl}/informes`;
+
+    return this.http.get<InformeAdmin>(url);
+
+  }
 }

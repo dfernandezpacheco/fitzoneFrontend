@@ -12,6 +12,9 @@ import {ReceptionDashboardComponent} from './pages/recepcion/dashboard/dashboard
 import { AdminPlanesComponent } from './pages/planes/planes';
 import { AdminEstadosComponent } from './pages/admin/estados/estados'
 import { AdminCuotasComponent } from './pages/admin/cuotas/cuotas';
+import { AdminInformesComponent } from './pages/admin/informes/informes';
+import { RecepcionSociosComponent } from './pages/recepcion/socios/socios';
+import { RecepcionPagosComponent } from './pages/recepcion/pagos/pagos';
 
 export const routes: Routes = [
   // PÁGINAS PÚBLICAS
@@ -30,11 +33,11 @@ export const routes: Routes = [
   {path: 'admin/planes', component: AdminPlanesComponent, canActivate: [roleGuard], data: { roles: [1] }},
   {path: 'admin/estados', component: AdminEstadosComponent, canActivate: [roleGuard], data: { roles: [1] }},
   {path: 'admin/cuotas', component: AdminCuotasComponent, canActivate: [roleGuard], data: { roles: [1] }},
-  {path: 'informes', loadComponent: () => import('./pages/admin/informes/informes').then(m => m.Informes)
-  }
+  {path: 'admin/informes', component: AdminInformesComponent, canActivate: [roleGuard], data: { roles: [1] }},
   // ZONA DE RECEPCIÓN
   {path: 'recepcion', redirectTo: 'recepcion/dashboard', pathMatch: 'full'},
-  {path: 'recepcion/dashboard', component: ReceptionDashboardComponent, canActivate: [roleGuard], data: {roles: [1, 2]}}
-
+  {path: 'recepcion/dashboard', component: ReceptionDashboardComponent, canActivate: [roleGuard], data: { roles: [2] }},
+  {path: 'recepcion/socios', component: RecepcionSociosComponent, canActivate: [roleGuard], data: { roles: [2] }},
+  {path: 'recepcion/pagos', component: RecepcionPagosComponent, canActivate: [roleGuard], data: { roles: [2] }},
 ];
 
