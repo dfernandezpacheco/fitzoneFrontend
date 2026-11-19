@@ -1,0 +1,691 @@
+<div class="reception-layout">
+
+  <!-- MENÚ LATERAL -->
+
+  <aside class="reception-sidebar">
+
+    <div class="reception-logo">
+      <div class="logo-icon">FZ</div>
+
+      <div>
+        <h2>FitZone</h2>
+        <span>Gestión de recepción</span>
+      </div>
+    </div>
+
+    <span class="sidebar-title">NAVEGACIÓN</span>
+
+    <nav class="reception-nav">
+
+      <a class="reception-nav-item" href="/recepcion/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
+
+      <a class="reception-nav-item" href="/recepcion/socios">
+        <span>♙</span>
+        Socios
+      </a>
+
+      <a class="reception-nav-item" href="/recepcion/pagos">
+        <span>€</span>
+        Pagos
+      </a>
+
+      <a class="reception-nav-item active" href="/recepcion/turnos">
+        <span>◷</span>
+        Turnos
+      </a>
+
+      <a class="reception-nav-item">
+        <span>▤</span>
+        Reservas
+      </a>
+
+    </nav>
+
+    <div class="reception-account">
+
+      <span class="sidebar-title">CUENTA</span>
+
+      <button type="button" (click)="cerrarSesion()">
+        ↪ Cerrar sesión
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENIDO -->
+
+  <main class="reception-main">
+
+    <!-- CABECERA -->
+
+    <header class="reception-header">
+
+      <div>
+        <h2>Gestión de turnos</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="reception-user">
+
+        <div class="reception-avatar">
+          {{ inicialUsuario }}
+        </div>
+
+        <div>
+          <strong>{{ usuario }}</strong>
+          <span>Recepción</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CUERPO -->
+
+    <div class="reception-body">
+
+      <!-- BIENVENIDA -->
+
+      <section class="reception-welcome">
+
+        <div>
+          <h1>Turnos y actividades</h1>
+
+          <p>
+            Consulta la programación, el aforo y los monitores.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="turn-create-button"
+          (click)="abrirFormulario()">
+          + Nuevo turno
+        </button>
+
+      </section>
+
+
+      <!-- MENSAJE DE ÉXITO -->
+
+      @if (mensaje) {
+
+        <div class="turn-success">
+          ✓ {{ mensaje }}
+        </div>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @if (error) {
+
+        <div class="turn-error">
+
+          <p>{{ error }}</p>
+
+          @if (!mostrarFormulario) {
+
+            <button type="button" (click)="cargarDatos()">
+              Reintentar
+            </button>
+
+          }
+
+        </div>
+
+      }
+
+
+      <!-- SELECTOR DE FECHA -->
+
+      <section class="turn-date-panel">
+
+        <div>
+          <label for="fechaTurno">FECHA DE PROGRAMACIÓN</label>
+
+          <p>
+            Selecciona el día que deseas consultar.
+          </p>
+        </div>
+
+        <input
+          id="fechaTurno"
+          type="date"
+          [value]="fechaSeleccionada"
+          (change)="cambiarFecha($event)">
+
+      </section>
+
+
+      <!-- RESUMEN -->
+
+      <section class="turn-stats">
+
+        <article class="turn-stat-card">
+
+          <span>TURNOS DEL DÍA</span>
+
+          <strong>{{ totalTurnos }}</strong>
+
+          <small>Actividades programadas</small>
+
+        </article>
+
+
+        <article class="turn-stat-card">
+
+          <span>RESERVAS CONFIRMADAS</span>
+
+          <strong>{{ totalReservas }}</strong>
+
+          <small>Plazas ocupadas</small>
+
+        </article>
+
+
+        <article class="turn-stat-card">
+
+          <span>PLAZAS DISPONIBLES</span>
+
+          <strong class="green-text">
+            {{ plazasDisponibles }}
+          </strong>
+
+          <small>Aforo restante del día</small>
+
+        </article>
+
+
+        <article class="turn-stat-card">
+
+          <span>MONITORES DISPONIBLES</span>
+
+          <strong>{{ monitores.length }}</strong>
+
+          <small>Monitores registrados</small>
+
+        </article>
+
+      </section>
+
+
+      <!-- LISTADO -->
+
+      <section class="turns-section">
+
+        <div class="turns-section-header">
+
+          <div>
+            <h2>Actividades programadas</h2>
+
+            <p>
+              Turnos correspondientes al día seleccionado.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="turn-refresh-button"
+            (click)="cargarDatos()"
+            [disabled]="cargando">
+            ↻ Actualizar
+          </button>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        @if (cargando) {
+
+          <div class="turn-loading">
+            Cargando programación...
+          </div>
+
+        }
+
+
+        <!-- TABLA -->
+
+        @if (!cargando && !error) {
+
+          @if (turnos.length > 0) {
+
+            <div class="turn-table-container">
+
+              <table class="turn-table">
+
+                <thead>
+
+                <tr>
+                  <th>ACTIVIDAD</th>
+                  <th>HORARIO</th>
+                  <th>DURACIÓN</th>
+                  <th>SALA</th>
+                  <th>MONITOR</th>
+                  <th>OCUPACIÓN</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                  @for (turno of turnos; track turno.id) {
+
+                    <tr>
+
+                      <!-- ACTIVIDAD -->
+
+                      <td>
+                        <div class="turn-activity">
+
+                          <div class="turn-activity-icon">
+                            ◷
+                          </div>
+
+                          <div>
+                            <strong>{{ turno.nombre }}</strong>
+                            <span>Turno #{{ turno.id }}</span>
+                          </div>
+
+                        </div>
+                      </td>
+
+
+                      <!-- HORARIO -->
+
+                      <td>
+                        <strong class="turn-hour">
+                          {{ formatearHora(turno.hora) }}
+                        </strong>
+                      </td>
+
+
+                      <!-- DURACIÓN -->
+
+                      <td>
+                        {{ formatearDuracion(turno.duracion) }}
+                      </td>
+
+
+                      <!-- SALA -->
+
+                      <td>
+                        <span class="turn-room">
+                          {{ turno.sala }}
+                        </span>
+                      </td>
+
+
+                      <!-- MONITOR -->
+
+                      <td>
+                        {{ turno.nombreMonitor || 'Sin monitor' }}
+                      </td>
+
+
+                      <!-- OCUPACIÓN -->
+
+                      <td>
+
+                        <div class="turn-capacity">
+
+                          <div class="turn-capacity-label">
+
+                            <strong>
+                              {{ turno.reservasConfirmadas }}/{{ turno.aforoMaximo }}
+                            </strong>
+
+                            <span>
+                              {{ obtenerPorcentajeOcupacion(turno) }}%
+                            </span>
+
+                          </div>
+
+                          <div class="turn-capacity-track">
+
+                            <div
+                              class="turn-capacity-fill"
+                              [style.width.%]="obtenerPorcentajeOcupacion(turno)">
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          } @else {
+
+            <div class="turn-empty">
+
+              <span>◷</span>
+
+              <h3>No hay actividades programadas</h3>
+
+              <p>
+                No existen turnos registrados para la fecha seleccionada.
+              </p>
+
+              <button
+                type="button"
+                class="turn-create-button"
+                (click)="abrirFormulario()">
+                + Crear primer turno
+              </button>
+
+            </div>
+
+          }
+
+        }
+
+      </section>
+
+
+      <!-- MONITORES -->
+
+      <section class="turns-section monitors-section">
+
+        <div class="turns-section-header">
+
+          <div>
+            <h2>Equipo de monitores</h2>
+
+            <p>
+              Monitores disponibles para asignar a actividades.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="monitors-grid">
+
+          @for (monitor of monitores; track monitor.id) {
+
+            <article class="monitor-card">
+
+              <div class="monitor-avatar">
+                {{ monitor.nombre.charAt(0).toUpperCase() }}
+              </div>
+
+              <div>
+                <strong>
+                  {{ monitor.nombre }} {{ monitor.apellido }}
+                </strong>
+
+                <span>
+                  Monitor #{{ monitor.id }}
+                </span>
+
+                <small>
+                  Teléfono: {{ monitor.telefono }}
+                </small>
+              </div>
+
+            </article>
+
+          }
+
+          @if (monitores.length === 0 && !cargando) {
+
+            <p class="turn-empty-text">
+              No hay monitores registrados.
+            </p>
+
+          }
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- MODAL CREAR TURNO -->
+
+  @if (mostrarFormulario) {
+
+    <div class="turn-modal-overlay">
+
+      <section class="turn-modal">
+
+        <div class="turn-modal-header">
+
+          <div>
+            <h2>Crear nuevo turno</h2>
+
+            <p>
+              Programa una actividad y asigna un monitor.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="turn-modal-close"
+            (click)="cerrarFormulario()"
+            [disabled]="guardando">
+            ×
+          </button>
+
+        </div>
+
+
+        <form
+          #turnoForm="ngForm"
+          (ngSubmit)="guardarTurno()">
+
+
+          <div class="turn-form-grid">
+
+            <!-- NOMBRE -->
+
+            <div class="turn-form-group full-width">
+
+              <label for="nombreTurno">
+                Nombre de la actividad *
+              </label>
+
+              <input
+                id="nombreTurno"
+                type="text"
+                name="nombre"
+                [(ngModel)]="formulario.nombre"
+                placeholder="Ej. Yoga, Spinning, Fuerza funcional"
+                maxlength="100"
+                required>
+
+            </div>
+
+
+            <!-- FECHA -->
+
+            <div class="turn-form-group">
+
+              <label for="fecha">
+                Fecha *
+              </label>
+
+              <input
+                id="fecha"
+                type="date"
+                name="fecha"
+                [(ngModel)]="formulario.fecha"
+                [min]="fechaSeleccionada"
+                required>
+
+            </div>
+
+
+            <!-- HORA -->
+
+            <div class="turn-form-group">
+
+              <label for="hora">
+                Hora de comienzo *
+              </label>
+
+              <input
+                id="hora"
+                type="time"
+                name="hora"
+                [(ngModel)]="formulario.hora"
+                required>
+
+            </div>
+
+
+            <!-- DURACIÓN -->
+
+            <div class="turn-form-group">
+
+              <label for="duracion">
+                Duración *
+              </label>
+
+              <input
+                id="duracion"
+                type="time"
+                name="duracion"
+                [(ngModel)]="formulario.duracion"
+                required>
+
+            </div>
+
+
+            <!-- SALA -->
+
+            <div class="turn-form-group">
+
+              <label for="sala">
+                Sala *
+              </label>
+
+              <input
+                id="sala"
+                type="text"
+                name="sala"
+                [(ngModel)]="formulario.sala"
+                placeholder="Ej. Sala 1"
+                required>
+
+            </div>
+
+
+            <!-- AFORO -->
+
+            <div class="turn-form-group">
+
+              <label for="aforo">
+                Aforo máximo *
+              </label>
+
+              <input
+                id="aforo"
+                type="number"
+                name="aforoMaximo"
+                [(ngModel)]="formulario.aforoMaximo"
+                min="1"
+                max="100"
+                required>
+
+            </div>
+
+
+            <!-- MONITOR -->
+
+            <div class="turn-form-group">
+
+              <label for="monitor">
+                Monitor asignado *
+              </label>
+
+              <select
+                id="monitor"
+                name="monitorId"
+                [(ngModel)]="formulario.monitorId"
+                required>
+
+                <option [ngValue]="0">
+                  Selecciona monitor
+                </option>
+
+                @for (monitor of monitores; track monitor.id) {
+
+                  <option [ngValue]="monitor.id">
+                    {{ monitor.nombre }} {{ monitor.apellido }}
+                  </option>
+
+                }
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          @if (error && mostrarFormulario) {
+
+            <div class="turn-form-error">
+              {{ error }}
+            </div>
+
+          }
+
+
+          <div class="turn-form-actions">
+
+            <button
+              type="button"
+              class="turn-cancel-button"
+              (click)="cerrarFormulario()"
+              [disabled]="guardando">
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="turn-create-button"
+              [disabled]="guardando || turnoForm.invalid || formulario.monitorId <= 0">
+
+              @if (guardando) {
+                Guardando...
+              } @else {
+                Crear turno
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+    </div>
+
+  }
+
+</div>
