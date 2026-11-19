@@ -15,6 +15,7 @@ import { AdminCuotasComponent } from './pages/admin/cuotas/cuotas';
 import { AdminInformesComponent } from './pages/admin/informes/informes';
 import { RecepcionSociosComponent } from './pages/recepcion/socios/socios';
 import { RecepcionPagosComponent } from './pages/recepcion/pagos/pagos';
+import { RecepcionTurnosComponent } from './pages/recepcion/turnos/turnos';
 
 export const routes: Routes = [
   // PÁGINAS PÚBLICAS
@@ -39,5 +40,6 @@ export const routes: Routes = [
   {path: 'recepcion/dashboard', component: ReceptionDashboardComponent, canActivate: [roleGuard], data: { roles: [2] }},
   {path: 'recepcion/socios', component: RecepcionSociosComponent, canActivate: [roleGuard], data: { roles: [2] }},
   {path: 'recepcion/pagos', component: RecepcionPagosComponent, canActivate: [roleGuard], data: { roles: [2] }},
+  {path: 'recepcion/turnos', component: RecepcionTurnosComponent, canActivate: [roleGuard], data: { roles: [2] }},
 ];
 

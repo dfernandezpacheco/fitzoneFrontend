@@ -75,6 +75,35 @@ export interface ResumenCuotasRecepcion {
   cuotasPendientes: number;
   cuotasCanceladas: number;
 }
+export interface MonitorRecepcion {
+  id: number;
+  nombre: string;
+  apellido: string;
+  telefono: number;
+}
+
+export interface TurnoRecepcion {
+  id: number;
+  nombre: string;
+  dia: string;
+  hora: string;
+  duracion: string;
+  sala: string;
+  aforoMaximo: number;
+  monitorId: number;
+  nombreMonitor: string;
+  reservasConfirmadas: number;
+}
+
+export interface CrearTurnoRecepcion {
+  nombre: string;
+  fecha: string;
+  hora: string;
+  duracion: string;
+  sala: string;
+  aforoMaximo: number;
+  monitorId: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -146,6 +175,33 @@ export class RecepcionService {
       `${this.apiUrl}/cuotas/${id}/pagar`,
       null
     );
+  }
+
+  listarTurnos(fecha: string): Observable<TurnoRecepcion[]> {
+
+    return this.http.get<TurnoRecepcion[]>(
+      `${this.apiUrl}/turnos?fecha=${fecha}`
+    );
+
+  }
+
+  listarMonitores(): Observable<MonitorRecepcion[]> {
+
+    return this.http.get<MonitorRecepcion[]>(
+      `${this.apiUrl}/turnos/monitores`
+    );
+
+  }
+
+  crearTurno(
+    datos: CrearTurnoRecepcion
+  ): Observable<TurnoRecepcion> {
+
+    return this.http.post<TurnoRecepcion>(
+      `${this.apiUrl}/turnos`,
+      datos
+    );
+
   }
 
 }
