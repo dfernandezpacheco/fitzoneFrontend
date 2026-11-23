@@ -2,7 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectorRef,
-  inject
+  inject, signal
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
@@ -14,13 +14,15 @@ import {
   RecepcionService,
   TurnoRecepcion,
   MonitorRecepcion,
-  CrearTurnoRecepcion
+  CrearTurnoRecepcion,
+  ReservaRecepcion
 } from '../../../services/recepcion';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-recepcion-turnos',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   templateUrl: './turnos.html',
   styleUrl: './turnos.css'
 })
@@ -29,6 +31,7 @@ export class RecepcionTurnosComponent implements OnInit {
   private recepcionService = inject(RecepcionService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+
 
   usuario = sessionStorage.getItem('usuario') || 'Recepción';
 
@@ -46,6 +49,11 @@ export class RecepcionTurnosComponent implements OnInit {
   mostrarFormulario = false;
 
   formulario: CrearTurnoRecepcion = this.formularioVacio();
+
+  reservas = signal<ReservaRecepcion[]>([]);
+  actividadSeleccionada = signal<TurnoRecepcion | null>(null);
+  cargandoReservas = signal(false);
+  errorReservas = signal('');
 
   get inicialUsuario(): string {
     return this.usuario.charAt(0).toUpperCase();
@@ -295,6 +303,40 @@ export class RecepcionTurnosComponent implements OnInit {
       )
     );
 
+  }
+
+  verInscritos(turno: TurnoRecepcion[]): void {
+
+    this.actividadSeleccionada.set(turno);
+    this.reservas.set([]);
+    this.errorReservas.set('');
+    this.cargandoReservas.set(true);
+
+    this.recepcionService
+      .listarReservasActividad(turno.id)
+      .subscribe({
+
+        next: reservas => {
+          this.reservas.set(reservas);
+          this.cargandoReservas.set(false);
+        },
+
+        error: error => {
+          this.cargandoReservas.set(false);
+
+          this.errorReservas.set(
+            error.error?.message ||
+            'No se han podido cargar los socios inscritos.'
+          );
+        }
+
+      });
+  }
+
+  cerrarInscritos(): void {
+    this.actividadSeleccionada.set(null);
+    this.reservas.set([]);
+    this.errorReservas.set('');
   }
 
   volverDashboard(): void {

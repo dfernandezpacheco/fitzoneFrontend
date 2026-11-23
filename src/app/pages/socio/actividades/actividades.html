@@ -1,0 +1,191 @@
+<div class="actividades-layout">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <img src="assets/fitzone-logo.png" alt="FitZone">
+      <div>
+        <strong>FitZone</strong>
+        <span>Área de socio</span>
+      </div>
+    </div>
+
+    <span class="menu-title">NAVEGACIÓN</span>
+
+    <nav>
+      <a routerLink="/socio/dashboard" class="nav-item">
+        <span>⌂</span> Inicio
+      </a>
+
+      <a routerLink="/socio/mi-ficha" class="nav-item">
+        <span>◉</span> Mi ficha
+      </a>
+
+      <a routerLink="/socio/actividades"
+         class="nav-item active">
+        <span>✦</span> Actividades
+      </a>
+    </nav>
+
+    <div class="account">
+      <span class="menu-title">CUENTA</span>
+
+      <button class="nav-item logout"
+              (click)="cerrarSesion()">
+        <span>↪</span> Cerrar sesión
+      </button>
+    </div>
+
+  </aside>
+
+  <main>
+
+    <header class="page-header">
+      <div>
+        <h1>Socio · Actividades</h1>
+        <p>FitZone · Área privada</p>
+      </div>
+    </header>
+
+    <section class="content">
+
+      <h2>Actividades disponibles</h2>
+
+      <p class="subtitle">
+        Descubre nuestras clases y reserva tu próxima actividad.
+      </p>
+
+      @if (mensaje()) {
+        <div class="success">
+          {{ mensaje() }}
+        </div>
+      }
+
+      @if (error()) {
+        <div class="error">
+          {{ error() }}
+        </div>
+      }
+
+      @if (cargando()) {
+        <p class="state">Cargando actividades...</p>
+      }
+
+      @if (!cargando() && actividades().length === 0) {
+        <div class="empty">
+          <h3>No hay actividades disponibles</h3>
+          <p>Actualmente no hay clases futuras con plazas libres.</p>
+        </div>
+      }
+
+      <div class="activities-grid">
+
+        @for (actividad of actividades(); track actividad.id) {
+
+          <article class="activity-card">
+
+            <div class="activity-top">
+              <span class="category">ACTIVIDAD</span>
+              <span class="places">
+                {{ actividad.plazasDisponibles }} plazas
+              </span>
+            </div>
+
+            <h3>{{ actividad.nombre }}</h3>
+
+            <div class="activity-info">
+              <p>📅 {{ formatoFecha(actividad.dia) }}</p>
+              <p>🕒 {{ actividad.hora }} · {{ actividad.duracion }}</p>
+              <p>📍 {{ actividad.sala }}</p>
+              <p>👤 {{ actividad.monitor || 'Monitor pendiente' }}</p>
+            </div>
+
+            <button
+              type="button"
+              class="reserve-button"
+              [disabled]="reservando() === actividad.id"
+              (click)="reservar(actividad)">
+
+              @if (reservando() === actividad.id) {
+                Reservando...
+              } @else {
+                Reservar plaza
+              }
+
+            </button>
+
+          </article>
+
+        }
+
+      </div>
+
+      <section class="reservations-section">
+
+        <h2>Mis reservas</h2>
+
+        <p class="subtitle">
+          Estas son tus actividades reservadas.
+        </p>
+
+        @if (reservas().length === 0) {
+
+          <div class="empty">
+            Todavía no tienes reservas activas.
+          </div>
+
+        } @else {
+
+          <div class="reservations-list">
+
+            @for (reserva of reservas(); track reserva.id) {
+
+              <article class="reservation-card">
+
+                <div>
+                  <h3>{{ reserva.actividadNombre }}</h3>
+
+                  <p>
+                    {{ formatoFecha(reserva.fechaActividad) }}
+                  </p>
+
+                  <small>
+                    {{ reserva.hora }} · {{ reserva.sala }}
+                  </small>
+                </div>
+
+                <div class="reservation-actions">
+
+                  <span class="status">CONFIRMADA</span>
+
+                  <button
+                    type="button"
+                    class="cancel-button"
+                    [disabled]="cancelando() === reserva.id"
+                    (click)="cancelar(reserva)">
+
+                    @if (cancelando() === reserva.id) {
+                      Cancelando...
+                    } @else {
+                      Cancelar reserva
+                    }
+
+                  </button>
+
+                </div>
+
+              </article>
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
+    </section>
+
+  </main>
+
+</div>

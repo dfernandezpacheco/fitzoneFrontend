@@ -31,6 +31,31 @@ export interface ResumenSocio {
   proximaActividad: ActividadResumen | null;
   actividadesRecientes: ActividadResumen[];
 }
+
+export interface ActividadDisponible {
+  id: number;
+  nombre: string;
+  dia: string;
+  hora: string;
+  duracion: string;
+  sala: string;
+  aforoMaximo: number;
+  plazasDisponibles: number;
+  monitor: string | null;
+}
+
+export interface ReservaSocio {
+  id: number;
+  estado: boolean;
+  fechaReserva: string;
+  actividadId: number;
+  actividadNombre: string;
+  fechaActividad: string;
+  hora: string;
+  duracion: string;
+  sala: string;
+  monitor: string | null;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -46,5 +71,30 @@ export class SocioService {
 
   obtenerMiResumen(): Observable<ResumenSocio> {
     return this.http.get<ResumenSocio>(`${this.apiUrl}/mi-resumen`);
+  }
+
+  listarActividadesDisponibles(): Observable<ActividadDisponible[]> {
+    return this.http.get<ActividadDisponible[]>(
+      `${this.apiUrl}/actividades-disponibles`
+    );
+  }
+
+  listarMisReservas(): Observable<ReservaSocio[]> {
+    return this.http.get<ReservaSocio[]>(
+      `${this.apiUrl}/mis-reservas`
+    );
+  }
+
+  reservarActividad(actividadId: number): Observable<ReservaSocio> {
+    return this.http.post<ReservaSocio>(
+      `${this.apiUrl}/mis-reservas/${actividadId}`,
+      {}
+    );
+  }
+
+  cancelarReserva(reservaId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/mis-reservas/${reservaId}`
+    );
   }
 }

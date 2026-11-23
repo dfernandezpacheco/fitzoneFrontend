@@ -16,6 +16,7 @@ import { AdminInformesComponent } from './pages/admin/informes/informes';
 import { RecepcionSociosComponent } from './pages/recepcion/socios/socios';
 import { RecepcionPagosComponent } from './pages/recepcion/pagos/pagos';
 import { RecepcionTurnosComponent } from './pages/recepcion/turnos/turnos';
+import { ActividadesSocioComponent } from './pages/socio/actividades/actividades';
 
 export const routes: Routes = [
   // PÁGINAS PÚBLICAS
@@ -28,6 +29,7 @@ export const routes: Routes = [
   // ZONA DEL SOCIO
   {path: 'socio/dashboard', component: SocioDashboardComponent, canActivate: [roleGuard], data: {roles: [3]}},
   {path: 'socio/mi-ficha', component: MiFichaComponent, canActivate: [roleGuard], data: {roles: [3]}},
+  {path: 'socio/actividades', component: ActividadesSocioComponent, canActivate: [roleGuard], data: { roles: [3] }},
   // ZONA ADMINISTRATIVA
   {path: 'admin', redirectTo: 'admin/dashboard', pathMatch: 'full'},
   {path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [roleGuard], data: {roles: [1]}},

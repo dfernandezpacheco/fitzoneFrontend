@@ -489,6 +489,13 @@
             ×
           </button>
 
+          <button
+            type="button"
+            class="btn-inscritos"
+            (click)="verInscritos(turnos)">
+            Ver inscritos
+          </button>
+
         </div>
 
 
@@ -684,8 +691,118 @@
 
       </section>
 
+      @if (actividadSeleccionada(); as actividad) {
+
+        <div class="modal-overlay" (click)="cerrarInscritos()">
+
+          <section
+            class="modal-inscritos"
+            (click)="$event.stopPropagation()">
+
+            <div class="modal-header">
+
+              <div>
+                <span class="modal-label">RECEPCIÓN</span>
+
+                <h2>{{ actividad.nombre }}</h2>
+
+                <p>
+                  {{ actividad.hora }} · {{ actividad.sala }}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn-cerrar"
+                (click)="cerrarInscritos()">
+                ✕
+              </button>
+
+            </div>
+
+            <div class="inscritos-resumen">
+
+              <div>
+                <strong>{{ reservas().length }}</strong>
+                <span>Socios inscritos</span>
+              </div>
+
+              <div>
+                <strong>
+                  {{ actividad.aforoMaximo - reservas().length }}
+                </strong>
+                <span>Plazas disponibles</span>
+              </div>
+
+            </div>
+
+            @if (cargandoReservas()) {
+              <p class="mensaje-modal">Cargando inscritos...</p>
+            }
+
+            @if (errorReservas()) {
+              <p class="error-modal">{{ errorReservas() }}</p>
+            }
+
+            @if (!cargandoReservas() && !errorReservas()) {
+
+              @if (reservas().length === 0) {
+
+                <div class="sin-inscritos">
+                  Todavía no hay socios inscritos en esta actividad.
+                </div>
+
+              } @else {
+
+                <div class="lista-inscritos">
+
+                  @for (reserva of reservas(); track reserva.reservaId) {
+
+                    <article class="socio-inscrito">
+
+                      <div class="avatar-socio">
+                        {{ reserva.nombreSocio.charAt(0) }}
+                      </div>
+
+                      <div class="datos-socio">
+
+                        <strong>
+                          {{ reserva.nombreSocio }}
+                          {{ reserva.apellidoSocio }}
+                        </strong>
+
+                        <small>
+                          Reserva:
+                          {{ reserva.fechaReserva | date:'dd/MM/yyyy HH:mm' }}
+                        </small>
+
+                      </div>
+
+                      <span class="estado-confirmado">
+                  Confirmada
+                </span>
+
+                    </article>
+
+                  }
+
+                </div>
+
+              }
+
+            }
+
+          </section>
+
+        </div>
+
+      }
     </div>
 
+
+
   }
+
+
 
 </div>

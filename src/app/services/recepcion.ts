@@ -105,6 +105,15 @@ export interface CrearTurnoRecepcion {
   monitorId: number;
 }
 
+export interface ReservaRecepcion {
+  reservaId: number;
+  socioId: number;
+  nombreSocio: string;
+  apellidoSocio: string;
+  fechaReserva: string;
+  estado: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -202,6 +211,12 @@ export class RecepcionService {
       datos
     );
 
+  }
+
+  listarReservasActividad(actividadId: number) {
+    return this.http.get<ReservaRecepcion[]>(
+      `${this.apiUrl}/turnos/${actividadId}/reservas`
+    );
   }
 
 }
