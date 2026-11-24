@@ -1,17 +1,13 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-interface ReservaRecepcion {
-  reservaId: number;
-  socioId: number;
-  nombreSocio: string;
-  apellidoSocio: string;
-  actividad: string;
-  fechaReserva: string;
-  fechaActividad: string;
+interface Reserva {
+  id: number;
   hora: string;
-  estado: boolean;
-  asistio: boolean | null;
+  socio: string;
+  clase: string;
+  entrenador: string;
+  estado: 'Confirmada' | 'Pendiente';
 }
 
 @Component({
@@ -23,76 +19,64 @@ interface ReservaRecepcion {
 })
 export class ReservasComponent {
 
-  reservas = signal<ReservaRecepcion[]>([
+  busqueda = signal('');
+  periodo = signal<'hoy' | 'semana'>('hoy');
+
+  reservas = signal<Reserva[]>([
     {
-      reservaId: 1,
-      socioId: 101,
-      nombreSocio: 'Carlos',
-      apellidoSocio: 'García',
-      actividad: 'Spinning',
-      fechaReserva: '2026-11-20',
-      fechaActividad: '2026-11-25',
-      hora: '10:00',
-      estado: true,
-      asistio: null
+      id: 1,
+      hora: '17:30',
+      socio: 'María López',
+      clase: 'HIIT',
+      entrenador: 'Laura Martín',
+      estado: 'Confirmada'
     },
     {
-      reservaId: 2,
-      socioId: 102,
-      nombreSocio: 'Laura',
-      apellidoSocio: 'Martínez',
-      actividad: 'Yoga',
-      fechaReserva: '2026-11-21',
-      fechaActividad: '2026-11-25',
-      hora: '11:30',
-      estado: true,
-      asistio: true
+      id: 2,
+      hora: '18:30',
+      socio: 'David García',
+      clase: 'HIIT',
+      entrenador: 'Laura Martín',
+      estado: 'Confirmada'
     },
     {
-      reservaId: 3,
-      socioId: 103,
-      nombreSocio: 'David',
-      apellidoSocio: 'López',
-      actividad: 'Cross Training',
-      fechaReserva: '2026-11-19',
-      fechaActividad: '2026-11-26',
-      hora: '18:00',
-      estado: false,
-      asistio: null
+      id: 3,
+      hora: '19:30',
+      socio: 'Lucía Torres',
+      clase: 'Fuerza',
+      entrenador: 'Carlos Pérez',
+      estado: 'Confirmada'
+    },
+    {
+      id: 4,
+      hora: '20:30',
+      socio: 'Pablo Martín',
+      clase: 'Yoga',
+      entrenador: 'Ana Ruiz',
+      estado: 'Pendiente'
+    },
+    {
+      id: 5,
+      hora: '21:00',
+      socio: 'Sara Díaz',
+      clase: 'Ciclo',
+      entrenador: 'Marta León',
+      estado: 'Confirmada'
     }
   ]);
 
-  busqueda = signal('');
-  filtroEstado = signal('todas');
-
   reservasFiltradas = computed(() => {
     const texto = this.busqueda().toLowerCase().trim();
-    const estado = this.filtroEstado();
 
-    return this.reservas().filter(reserva => {
-
-      const nombre = `${reserva.nombreSocio} ${reserva.apellidoSocio}`.toLowerCase();
-
-      const coincideBusqueda =
-        nombre.includes(texto) ||
-        reserva.actividad.toLowerCase().includes(texto);
-
-      const coincideEstado =
-        estado === 'todas' ||
-        (estado === 'activas' && reserva.estado) ||
-        (estado === 'canceladas' && !reserva.estado);
-
-      return coincideBusqueda && coincideEstado;
-    });
+    return this.reservas().filter(reserva =>
+      reserva.socio.toLowerCase().includes(texto) ||
+      reserva.clase.toLowerCase().includes(texto) ||
+      reserva.entrenador.toLowerCase().includes(texto) ||
+      reserva.hora.includes(texto)
+    );
   });
 
-  totalReservas = computed(() => this.reservas().length);
-
-  reservasActivas = computed(() =>
-    this.reservas().filter(reserva => reserva.estado).length
-  );
-
-  reservasCanceladas = computed(() =>
-    this.reservas().filter(reserva => !reserva.estado).length
-  );
+  cambiarPeriodo(periodo: 'hoy' | 'semana'): void {
+    this.periodo.set(periodo);
+  }
 }

@@ -1,138 +1,194 @@
-<div class="reservas-container">
+<div class="recepcion-layout">
 
-  <div class="reservas-header">
-    <div>
-      <h1>Gestión de reservas</h1>
-      <p>Consulta y administra las reservas de los socios.</p>
-    </div>
-  </div>
+  <!-- MENÚ LATERAL -->
 
-  <div class="reservas-stats">
+  <aside class="sidebar">
 
-    <div class="stat-card">
-      <span>Total reservas</span>
-      <strong>{{ totalReservas() }}</strong>
-    </div>
+    <div class="sidebar-header">
+      <div class="logo">F</div>
 
-    <div class="stat-card">
-      <span>Reservas activas</span>
-      <strong>{{ reservasActivas() }}</strong>
+      <div class="brand">
+        <h2>FitZone</h2>
+        <span>Gestión de recepción</span>
+      </div>
     </div>
 
-    <div class="stat-card">
-      <span>Reservas canceladas</span>
-      <strong>{{ reservasCanceladas() }}</strong>
+    <div class="sidebar-section">
+      NAVEGACIÓN
     </div>
 
-  </div>
+    <nav class="reception-nav">
 
-  <div class="reservas-panel">
+      <a class="reception-nav-item" href="/recepcion/dashboard">
+        <span>⌂</span>
+        Inicio
+      </a>
 
-    <div class="reservas-filtros">
+      <a class="reception-nav-item" href="/recepcion/socios">
+        <span>♙</span>
+        Socios
+      </a>
 
-      <input
-        type="text"
-        placeholder="Buscar socio o actividad..."
-        [value]="busqueda()"
-        (input)="busqueda.set($any($event.target).value)"
-      />
+      <a class="reception-nav-item" href="/recepcion/pagos">
+        <span>€</span>
+        Pagos
+      </a>
 
-      <select
-        [value]="filtroEstado()"
-        (change)="filtroEstado.set($any($event.target).value)">
+      <a class="reception-nav-item" href="/recepcion/turnos">
+        <span>◷</span>
+        Turnos
+      </a>
 
-        <option value="todas">Todas las reservas</option>
-        <option value="activas">Activas</option>
-        <option value="canceladas">Canceladas</option>
+      <a class="reception-nav-item active" href="/recepcion/reservas">
+        <span>▤</span>
+        Reservas
+      </a>
 
-      </select>
+    </nav>
 
-    </div>
+    <div class="sidebar-bottom">
 
-    <div class="tabla-contenedor">
+      <div class="sidebar-divider"></div>
 
-      <table>
+      <span class="account-title">CUENTA</span>
 
-        <thead>
-        <tr>
-          <th>Socio</th>
-          <th>Actividad</th>
-          <th>Fecha actividad</th>
-          <th>Hora</th>
-          <th>Fecha reserva</th>
-          <th>Estado</th>
-          <th>Asistencia</th>
-        </tr>
-        </thead>
-
-        <tbody>
-
-          @for (reserva of reservasFiltradas(); track reserva.reservaId) {
-
-            <tr>
-
-              <td>
-                <div class="socio-info">
-                  <div class="socio-avatar">
-                    {{ reserva.nombreSocio.charAt(0) }}
-                  </div>
-
-                  <span>
-                    {{ reserva.nombreSocio }}
-                    {{ reserva.apellidoSocio }}
-                  </span>
-                </div>
-              </td>
-
-              <td>{{ reserva.actividad }}</td>
-
-              <td>{{ reserva.fechaActividad | date:'dd/MM/yyyy' }}</td>
-
-              <td>{{ reserva.hora }}</td>
-
-              <td>{{ reserva.fechaReserva | date:'dd/MM/yyyy' }}</td>
-
-              <td>
-                <span
-                  class="estado"
-                  [class.activa]="reserva.estado"
-                  [class.cancelada]="!reserva.estado">
-
-                  {{ reserva.estado ? 'Activa' : 'Cancelada' }}
-
-                </span>
-              </td>
-
-              <td>
-                @if (!reserva.estado) {
-                  <span class="asistencia-no-aplica">No aplica</span>
-                } @else if (reserva.asistio === true) {
-                  <span class="asistencia-si">Asistió</span>
-                } @else if (reserva.asistio === false) {
-                  <span class="asistencia-no">No asistió</span>
-                } @else {
-                  <span class="asistencia-pendiente">Pendiente</span>
-                }
-              </td>
-
-            </tr>
-
-          } @empty {
-
-            <tr>
-              <td colspan="7" class="sin-resultados">
-                No se encontraron reservas.
-              </td>
-            </tr>
-
-          }
-
-        </tbody>
-
-      </table>
+      <a class="logout">
+        Cerrar sesión
+      </a>
 
     </div>
 
-  </div>
+  </aside>
+
+
+  <!-- CONTENIDO PRINCIPAL -->
+
+  <main class="main-content">
+
+    <!-- CABECERA -->
+
+    <header class="topbar">
+
+      <div>
+        <h2>Recepción · Reservas</h2>
+        <span>FitZone · Área privada</span>
+      </div>
+
+      <div class="user-profile">
+
+        <div class="user-avatar">D</div>
+
+        <div class="user-info">
+          <strong>David</strong>
+          <span>Usuario</span>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- CONTENIDO -->
+
+    <section class="page-content">
+
+      <div class="page-heading">
+
+        <h1>Reservas</h1>
+
+        <p>
+          Consulta y gestiona las reservas de clases del día.
+        </p>
+
+      </div>
+
+
+      <!-- BUSCADOR Y FILTROS -->
+
+      <div class="filter-bar">
+
+        <input
+          type="text"
+          placeholder="Filtrar por clase, socio o fecha..."
+          [value]="busqueda()"
+          (input)="busqueda.set($any($event.target).value)"
+        />
+
+        <div class="period-filters">
+
+          <button
+            type="button"
+            [class.selected]="periodo() === 'hoy'"
+            (click)="cambiarPeriodo('hoy')">
+
+            Hoy
+
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="periodo() === 'semana'"
+            (click)="cambiarPeriodo('semana')">
+
+            Semana
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- TABLA DE RESERVAS -->
+
+      <div class="reservas-table">
+
+        <div class="table-header">
+
+          <span>HORA</span>
+          <span>SOCIO</span>
+          <span>CLASE</span>
+          <span>ENTRENADOR</span>
+          <span>ESTADO</span>
+
+        </div>
+
+
+        @for (reserva of reservasFiltradas(); track reserva.id) {
+
+          <div class="table-row">
+
+            <strong>{{ reserva.hora }}</strong>
+
+            <span>{{ reserva.socio }}</span>
+
+            <span>{{ reserva.clase }}</span>
+
+            <span>{{ reserva.entrenador }}</span>
+
+            <span
+              class="reservation-status"
+              [class.pending]="reserva.estado === 'Pendiente'"
+              [class.confirmed]="reserva.estado === 'Confirmada'">
+
+              {{ reserva.estado }}
+
+            </span>
+
+          </div>
+
+        } @empty {
+
+          <div class="empty-state">
+            No se han encontrado reservas.
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  </main>
 
 </div>
