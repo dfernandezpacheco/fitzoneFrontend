@@ -37,7 +37,7 @@
         Turnos
       </a>
 
-      <a class="reception-nav-item">
+      <a class="reception-nav-item" href="/recepcion/reservas">
         <span>▤</span>
         Reservas
       </a>
@@ -489,10 +489,11 @@
             ×
           </button>
 
+          <div *ngFor="let turno of turnos">
           <button
             type="button"
             class="btn-inscritos"
-            (click)="verInscritos(turnos)">
+            (click)="verInscritos(turno)">
             Ver inscritos
           </button>
 
@@ -682,15 +683,32 @@
               } @else {
                 Crear turno
               }
-
             </button>
-
           </div>
-
         </form>
-
+        </div>
       </section>
 
+      <div class="filtros-reservas">
+
+        <input
+          type="text"
+          placeholder="Buscar socio por nombre o apellido..."
+          [value]="busquedaReserva()"
+          (input)="busquedaReserva.set($any($event.target).value)"
+        />
+
+        <select
+          [value]="filtroEstadoReserva()"
+          (change)="filtroEstadoReserva.set($any($event.target).value)">
+
+          <option value="todas">Todas las reservas</option>
+          <option value="activas">Reservas activas</option>
+          <option value="canceladas">Reservas canceladas</option>
+
+        </select>
+
+      </div>
       @if (actividadSeleccionada(); as actividad) {
 
         <div class="modal-overlay" (click)="cerrarInscritos()">

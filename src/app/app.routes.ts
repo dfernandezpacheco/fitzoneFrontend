@@ -17,6 +17,7 @@ import { RecepcionSociosComponent } from './pages/recepcion/socios/socios';
 import { RecepcionPagosComponent } from './pages/recepcion/pagos/pagos';
 import { RecepcionTurnosComponent } from './pages/recepcion/turnos/turnos';
 import { ActividadesSocioComponent } from './pages/socio/actividades/actividades';
+import { ReservasComponent } from './pages/recepcion/reservas/reservas';
 
 export const routes: Routes = [
   // PÁGINAS PÚBLICAS
@@ -43,5 +44,6 @@ export const routes: Routes = [
   {path: 'recepcion/socios', component: RecepcionSociosComponent, canActivate: [roleGuard], data: { roles: [2] }},
   {path: 'recepcion/pagos', component: RecepcionPagosComponent, canActivate: [roleGuard], data: { roles: [2] }},
   {path: 'recepcion/turnos', component: RecepcionTurnosComponent, canActivate: [roleGuard], data: { roles: [2] }},
+  {path: 'recepcion/reservas', component: ReservasComponent, canActivate: [roleGuard], data: { roles: [2] }}
 ];
 

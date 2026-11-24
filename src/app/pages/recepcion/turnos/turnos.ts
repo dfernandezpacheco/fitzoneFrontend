@@ -1,22 +1,11 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  inject, signal
-} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, inject, signal, computed} from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { forkJoin } from 'rxjs';
 
-import {
-  RecepcionService,
-  TurnoRecepcion,
-  MonitorRecepcion,
-  CrearTurnoRecepcion,
-  ReservaRecepcion
-} from '../../../services/recepcion';
+import {RecepcionService, TurnoRecepcion, MonitorRecepcion, CrearTurnoRecepcion, ReservaRecepcion} from '../../../services/recepcion';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -54,6 +43,8 @@ export class RecepcionTurnosComponent implements OnInit {
   actividadSeleccionada = signal<TurnoRecepcion | null>(null);
   cargandoReservas = signal(false);
   errorReservas = signal('');
+  busquedaReserva = signal('');
+  filtroEstadoReserva = signal('todas');
 
   get inicialUsuario(): string {
     return this.usuario.charAt(0).toUpperCase();
@@ -305,17 +296,17 @@ export class RecepcionTurnosComponent implements OnInit {
 
   }
 
-  verInscritos(turno: TurnoRecepcion[]): void {
+  verInscritos(turno: TurnoRecepcion): void {
 
     this.actividadSeleccionada.set(turno);
     this.reservas.set([]);
     this.errorReservas.set('');
     this.cargandoReservas.set(true);
 
+
     this.recepcionService
       .listarReservasActividad(turno.id)
       .subscribe({
-
         next: reservas => {
           this.reservas.set(reservas);
           this.cargandoReservas.set(false);
@@ -332,6 +323,38 @@ export class RecepcionTurnosComponent implements OnInit {
 
       });
   }
+
+  cancelarReserva(reserva: ReservaRecepcion): void {
+    const actividad = this.actividadSeleccionada();
+
+    if (!actividad) {
+      return;
+    }
+
+    const confirmar = confirm(
+      `¿Seguro que quieres cancelar la reserva de ${reserva.nombreSocio} ${reserva.apellidoSocio}?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.recepcionService
+      .cancelarReserva(actividad.id, reserva.reservaId)
+      .subscribe({
+        next: () => {
+          alert('Reserva cancelada correctamente.');
+          this.verInscritos(actividad);
+        },
+        error: (error) => {
+          console.error('Error al cancelar la reserva:', error);
+          alert(
+            error.error?.message || 'No se ha podido cancelar la reserva.'
+          );
+        }
+      });
+  }
+
 
   cerrarInscritos(): void {
     this.actividadSeleccionada.set(null);

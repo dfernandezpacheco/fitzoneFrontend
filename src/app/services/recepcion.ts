@@ -219,4 +219,14 @@ export class RecepcionService {
     );
   }
 
+  cancelarReserva(
+    actividadId: number,
+    reservaId: number
+  ) {
+    return this.http.put<void>(
+      `${this.apiUrl}/turnos/${actividadId}/reservas/${reservaId}/cancelar`,
+      {}
+    );
+  }
+
 }
