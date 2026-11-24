@@ -1,0 +1,176 @@
+.reservas-container {
+  padding: 30px;
+  color: #1e293b;
+}
+
+.reservas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.reservas-header h1 {
+  font-size: 28px;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.reservas-header p {
+  color: #64748b;
+  margin: 0;
+}
+
+.reservas-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-card span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.stat-card strong {
+  font-size: 30px;
+  color: #1e293b;
+}
+
+.reservas-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.reservas-filtros {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.reservas-filtros input,
+.reservas-filtros select {
+  padding: 12px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+}
+
+.reservas-filtros input {
+  flex: 1;
+}
+
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+th {
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 15px;
+  white-space: nowrap;
+}
+
+td {
+  padding: 16px 15px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.socio-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.socio-avatar {
+  width: 35px;
+  height: 35px;
+  background: #e0e7ff;
+  color: #3730a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.estado,
+.asistencia-si,
+.asistencia-no,
+.asistencia-pendiente,
+.asistencia-no-aplica {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.activa,
+.asistencia-si {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.cancelada,
+.asistencia-no {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.asistencia-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.asistencia-no-aplica {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.sin-resultados {
+  text-align: center;
+  padding: 35px;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .reservas-container {
+    padding: 15px;
+  }
+
+  .reservas-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .reservas-filtros {
+    flex-direction: column;
+  }
+}

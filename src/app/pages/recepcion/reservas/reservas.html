@@ -1,0 +1,138 @@
+<div class="reservas-container">
+
+  <div class="reservas-header">
+    <div>
+      <h1>Gestión de reservas</h1>
+      <p>Consulta y administra las reservas de los socios.</p>
+    </div>
+  </div>
+
+  <div class="reservas-stats">
+
+    <div class="stat-card">
+      <span>Total reservas</span>
+      <strong>{{ totalReservas() }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Reservas activas</span>
+      <strong>{{ reservasActivas() }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Reservas canceladas</span>
+      <strong>{{ reservasCanceladas() }}</strong>
+    </div>
+
+  </div>
+
+  <div class="reservas-panel">
+
+    <div class="reservas-filtros">
+
+      <input
+        type="text"
+        placeholder="Buscar socio o actividad..."
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+      />
+
+      <select
+        [value]="filtroEstado()"
+        (change)="filtroEstado.set($any($event.target).value)">
+
+        <option value="todas">Todas las reservas</option>
+        <option value="activas">Activas</option>
+        <option value="canceladas">Canceladas</option>
+
+      </select>
+
+    </div>
+
+    <div class="tabla-contenedor">
+
+      <table>
+
+        <thead>
+        <tr>
+          <th>Socio</th>
+          <th>Actividad</th>
+          <th>Fecha actividad</th>
+          <th>Hora</th>
+          <th>Fecha reserva</th>
+          <th>Estado</th>
+          <th>Asistencia</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+          @for (reserva of reservasFiltradas(); track reserva.reservaId) {
+
+            <tr>
+
+              <td>
+                <div class="socio-info">
+                  <div class="socio-avatar">
+                    {{ reserva.nombreSocio.charAt(0) }}
+                  </div>
+
+                  <span>
+                    {{ reserva.nombreSocio }}
+                    {{ reserva.apellidoSocio }}
+                  </span>
+                </div>
+              </td>
+
+              <td>{{ reserva.actividad }}</td>
+
+              <td>{{ reserva.fechaActividad | date:'dd/MM/yyyy' }}</td>
+
+              <td>{{ reserva.hora }}</td>
+
+              <td>{{ reserva.fechaReserva | date:'dd/MM/yyyy' }}</td>
+
+              <td>
+                <span
+                  class="estado"
+                  [class.activa]="reserva.estado"
+                  [class.cancelada]="!reserva.estado">
+
+                  {{ reserva.estado ? 'Activa' : 'Cancelada' }}
+
+                </span>
+              </td>
+
+              <td>
+                @if (!reserva.estado) {
+                  <span class="asistencia-no-aplica">No aplica</span>
+                } @else if (reserva.asistio === true) {
+                  <span class="asistencia-si">Asistió</span>
+                } @else if (reserva.asistio === false) {
+                  <span class="asistencia-no">No asistió</span>
+                } @else {
+                  <span class="asistencia-pendiente">Pendiente</span>
+                }
+              </td>
+
+            </tr>
+
+          } @empty {
+
+            <tr>
+              <td colspan="7" class="sin-resultados">
+                No se encontraron reservas.
+              </td>
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
