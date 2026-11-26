@@ -52,9 +52,7 @@
 
       <span class="account-title">CUENTA</span>
 
-      <a class="logout">
-        Cerrar sesión
-      </a>
+      <a class="logout" (click)="cerrarSesion()">Cerrar sesión</a>
 
     </div>
 
@@ -76,11 +74,10 @@
 
       <div class="user-profile">
 
-        <div class="user-avatar">D</div>
-
+        <div class="user-avatar">{{ usuario.charAt(0).toUpperCase() }}</div>
         <div class="user-info">
-          <strong>David</strong>
-          <span>Usuario</span>
+          <strong>{{ usuario }}</strong>
+          <span>Recepción</span>
         </div>
 
       </div>
@@ -153,37 +150,6 @@
 
         </div>
 
-
-        @for (reserva of reservasFiltradas(); track reserva.id) {
-
-          <div class="table-row">
-
-            <strong>{{ reserva.hora }}</strong>
-
-            <span>{{ reserva.socio }}</span>
-
-            <span>{{ reserva.clase }}</span>
-
-            <span>{{ reserva.entrenador }}</span>
-
-            <span
-              class="reservation-status"
-              [class.pending]="reserva.estado === 'Pendiente'"
-              [class.confirmed]="reserva.estado === 'Confirmada'">
-
-              {{ reserva.estado }}
-
-            </span>
-
-          </div>
-
-        } @empty {
-
-          <div class="empty-state">
-            No se han encontrado reservas.
-          </div>
-
-        }
 
       </div>
 

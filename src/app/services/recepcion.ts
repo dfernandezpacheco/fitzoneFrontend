@@ -112,6 +112,20 @@ export interface ReservaRecepcion {
   apellidoSocio: string;
   fechaReserva: string;
   estado: boolean;
+  asistio: boolean | null;
+}
+
+export interface ReservaListadoRecepcion {
+  reservaId: number;
+  actividadId: number;
+  nombreActividad: string;
+  dia: string;
+  hora: string;
+  nombreSocio: string;
+  dniSocio: string;
+  nombreMonitor: string | null;
+  estado: boolean;
+  asistio: boolean | null;
 }
 
 @Injectable({
@@ -216,6 +230,19 @@ export class RecepcionService {
   listarReservasActividad(actividadId: number) {
     return this.http.get<ReservaRecepcion[]>(
       `${this.apiUrl}/turnos/${actividadId}/reservas`
+    );
+  }
+
+  listarReservas(desde: string, hasta: string): Observable<ReservaListadoRecepcion[]> {
+    return this.http.get<ReservaListadoRecepcion[]>(
+      `${this.apiUrl}/reservas?desde=${desde}&hasta=${hasta}`
+    );
+  }
+
+  actualizarAsistencia(actividadId: number, reservaId: number, asistio: boolean) {
+    return this.http.put<void>(
+      `${this.apiUrl}/turnos/${actividadId}/reservas/${reservaId}/asistencia`,
+      { asistio }
     );
   }
 
