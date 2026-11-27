@@ -1,0 +1,81 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/fitzone-logo.png" alt="FitZone">
+      <div>
+        <strong>FitZone</strong>
+        <span>Área de socio</span>
+      </div>
+    </div>
+
+    <span class="menu-title">NAVEGACIÓN</span>
+    <nav>
+      <a routerLink="/socio/dashboard" class="nav-item "><span class="nav-icon">⌂</span>Inicio</a>
+      <a routerLink="/socio/mi-ficha" class="nav-item"><span class="nav-icon">◉</span>Mi ficha</a>
+      <a class="nav-item" type="button"><span class="nav-icon">€</span>Cuotas</a>
+      <a routerLink="/socio/actividades" class="nav-item"><span class="nav-icon">✦</span>Actividades</a>
+      <a routerLink="/socio/reservas" class="nav-item active"><span class="nav-icon">▣</span>Reservas</a>
+    </nav>
+
+    <div class="account">
+      <span class="menu-title">CUENTA</span>
+      <button class="nav-item logout" (click)="cerrarSesion()">↪ Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <h1>Socio · Mis reservas</h1>
+        <p>FitZone · Área privada</p>
+      </div>
+    </header>
+
+    <section class="content">
+      <h2>Historial de reservas</h2>
+      <p class="subtitle">Consulta las reservas que has realizado para tus actividades.</p>
+
+      <div class="filters">
+        <button [class.active]="filtro() === 'activas'" (click)="filtro.set('activas')">
+          Activas
+        </button>
+        <button [class.active]="filtro() === 'canceladas'" (click)="filtro.set('canceladas')">
+          Canceladas
+        </button>
+        <button [class.active]="filtro() === 'todas'" (click)="filtro.set('todas')">
+          Todas
+        </button>
+      </div>
+
+      @if (error()) {
+        <div class="error">{{ error() }}</div>
+      }
+
+      @if (cargando()) {
+        <p class="state">Cargando tus reservas...</p>
+      } @else if (visibles.length === 0) {
+        <div class="empty">
+          <h3>No hay reservas en esta categoría</h3>
+          <p>Cuando reserves una clase, aparecerá aquí.</p>
+          <a routerLink="/socio/actividades">Ver actividades</a>
+        </div>
+      } @else {
+        <div class="cards">
+          @for (r of visibles; track r.id) {
+            <article class="reservation">
+              <div class="top">
+                <span class="tag">{{ r.estado ? 'ACTIVA' : 'CANCELADA' }}</span>
+                <span class="id">Reserva #{{ r.id }}</span>
+              </div>
+              <h3>{{ r.actividadNombre }}</h3>
+              <p>📅 {{ fecha(r.fechaActividad) }}</p>
+              <p>🕒 {{ r.hora }} · {{ r.duracion }}</p>
+              <p>📍 {{ r.sala }}</p>
+              <p>👤 {{ r.monitor || 'Monitor pendiente' }}</p>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

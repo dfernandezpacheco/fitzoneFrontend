@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { MiPerfilSocio, SocioService } from '../../services/socio';
+import { MiPerfilSocio, SocioService } from '../../../services/socio';
 
 @Component({
   selector: 'app-mi-ficha',

@@ -6,7 +6,7 @@ import {
   SocioService,
   MiPerfilSocio,
   ResumenSocio
-} from '../../services/socio';
+} from '../../../services/socio';
 
 
 @Component({

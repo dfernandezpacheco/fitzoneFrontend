@@ -4,8 +4,8 @@ import { MembresiaComponent } from './pages/membresia/membresia';
 import { ClasesComponent } from './pages/clases/clases';
 import { LoginComponent } from './pages/login/login';
 import { RegistroComponent } from './pages/registro/registro';
-import { SocioDashboardComponent } from './pages/dashboard/dashboard';
-import { MiFichaComponent } from './pages/mi-ficha/mi-ficha';
+import { SocioDashboardComponent } from './pages/socio/dashboard/dashboard';
+import { MiFichaComponent } from './pages/socio/mi-ficha/mi-ficha';
 import { AdminDashboardComponent } from './pages/admin/dashboard/dashboard';
 import { roleGuard } from './guards/role.guard';
 import {ReceptionDashboardComponent} from './pages/recepcion/dashboard/dashboard';
@@ -18,6 +18,7 @@ import { RecepcionPagosComponent } from './pages/recepcion/pagos/pagos';
 import { RecepcionTurnosComponent } from './pages/recepcion/turnos/turnos';
 import { ActividadesSocioComponent } from './pages/socio/actividades/actividades';
 import { ReservasComponent } from './pages/recepcion/reservas/reservas';
+import { ReservasSocioComponent } from './pages/socio/reservas/reservas';
 
 export const routes: Routes = [
   // PÁGINAS PÚBLICAS
@@ -31,6 +32,7 @@ export const routes: Routes = [
   {path: 'socio/dashboard', component: SocioDashboardComponent, canActivate: [roleGuard], data: {roles: [3]}},
   {path: 'socio/mi-ficha', component: MiFichaComponent, canActivate: [roleGuard], data: {roles: [3]}},
   {path: 'socio/actividades', component: ActividadesSocioComponent, canActivate: [roleGuard], data: { roles: [3] }},
+  {path: 'socio/reservas', component: ReservasSocioComponent, canActivate: [roleGuard], data: { roles: [3] }},
   // ZONA ADMINISTRATIVA
   {path: 'admin', redirectTo: 'admin/dashboard', pathMatch: 'full'},
   {path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [roleGuard], data: {roles: [1]}},
